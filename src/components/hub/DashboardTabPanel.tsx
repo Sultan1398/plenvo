@@ -323,7 +323,13 @@ export function DashboardTabPanel() {
                   <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => formatMoney(Number(v), locale)} width={72} />
                   <Tooltip formatter={tooltipFormatter} />
                   <Legend />
-                  <Bar dataKey="invRealizedPL" name={t('ربح/خسارة محققة', 'Realized P/L')} radius={[4, 4, 0, 0]} maxBarSize={24}>
+                  <Bar
+                    dataKey="invRealizedPL"
+                    name={t('ربح/خسارة محققة', 'Realized P/L')}
+                    fill="#10b981"
+                    radius={[4, 4, 0, 0]}
+                    maxBarSize={24}
+                  >
                     {series.map((entry, index) => (
                       <Cell
                         key={`cell-pl-${index}`}
