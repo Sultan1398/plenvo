@@ -45,6 +45,7 @@ export async function submitSupportMessage(input: {
     return { ok: false, code: 'unauthorized' }
   }
 
+  // 1. الحفظ في قاعدة البيانات (يعمل بنجاح)
   const { error: insertError } = await supabase.from('support_messages').insert({
     user_id: user.id,
     email,
@@ -55,19 +56,26 @@ export async function submitSupportMessage(input: {
     return { ok: false, code: 'database' }
   }
 
+  // 2. إعدادات الإرسال (تم تعديلها لتتوافق مع Office 365)
   const transporter = nodemailer.createTransport({
     host: 'smtp.office365.com',
     port: 587,
-    secure: false,
+    secure: false, // يجب أن تكون false للمنفذ 587
+    requireTLS: true, // إجباري لمايكروسوفت
     auth: {
       user: smtpUser,
       pass: smtpPass,
     },
+    tls: {
+      ciphers: 'SSLv3', // تشفير إضافي يمنع مايكروسوفت من رفض الاتصال
+      rejectUnauthorized: false // يساعد في بيئة التطوير المحلية
+    }
   })
 
+  // 3. محاولة الإرسال
   try {
     await transporter.sendMail({
-      from: smtpUser,
+      from: smtpUser, // يجب أن يكون الإيميل الرسمي
       to: 'customerservice@planora.app',
       replyTo: email,
       subject: `[Planora Support] ${email}`,
@@ -76,7 +84,9 @@ export async function submitSupportMessage(input: {
         email
       )}</p><pre style="white-space:pre-wrap;font-family:sans-serif">${escapeHtml(message)}</pre>`,
     })
-  } catch {
+  } catch (error) {
+    // هذا السطر مهم جداً لكشف أي خطأ من مايكروسوفت
+    console.error("❌ تفاصيل رفض خادم البريد:", error);
     return { ok: false, code: 'email' }
   }
 
