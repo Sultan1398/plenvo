@@ -80,32 +80,3 @@ export function Logo({ size = 'md', showName = true, className }: LogoProps) {
     </div>
   )
 }
-
-export function LogoIcon({
-  size = 'md',
-}: {
-  size?: 'sm' | 'md' | 'lg' | 'xl'
-}) {
-  const { locale } = useLanguage()
-  const cfg = sizes[size]
-  return (
-    <div
-      className={cn(
-        'relative flex-shrink-0 overflow-hidden bg-white',
-        cfg.rounded,
-        cfg.shadow
-      )}
-      style={{ width: cfg.img, height: cfg.img }}
-    >
-      <Image
-        src="/brand/planora-logo.png"
-        alt={locale === 'ar' ? 'شعار بلانورا' : 'Planora logo'}
-        width={cfg.img}
-        height={cfg.img}
-        className="h-full w-full object-contain p-[6%]"
-        priority
-        unoptimized
-      />
-    </div>
-  )
-}

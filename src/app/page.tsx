@@ -17,7 +17,7 @@ const SHOT_FILES = {
   hero: 'dashboarda.png',
   analytics: 'dashboardb.png',
   yearStats: 'dashboardc.png',
-  income: 'Income.png',
+  income: 'income.png',
   expenses: 'expenses.png',
   investings: 'investings.png',
   savings: 'savings.png',
@@ -59,15 +59,35 @@ export default function LandingPage() {
       dir={locale === 'ar' ? 'rtl' : 'ltr'}
     >
       <nav className="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 sm:px-6 sm:py-4">
-        <Link href="/" className="flex items-center gap-2 sm:gap-3">
-          <Image
-            src="/brand/planora-logo.png"
-            alt={t('بلانورا', 'Planora')}
-            width={40}
-            height={40}
-            className="h-9 w-9 rounded-lg object-contain sm:h-10 sm:w-10"
-          />
-          <span className="text-lg font-bold tracking-tight text-brand sm:text-xl">
+        <Link
+          href="/"
+          className="flex items-center gap-3 sm:gap-4"
+          aria-label={t('بلانورا — الصفحة الرئيسية', 'Planora — Home')}
+        >
+          <span
+            className={cn(
+              'relative flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white',
+              'shadow-md shadow-brand/10 ring-1 ring-slate-200/80',
+              'sm:h-14 sm:w-14 sm:rounded-2xl sm:shadow-lg sm:shadow-brand/15 sm:ring-black/[0.06]'
+            )}
+          >
+            <Image
+              src="/brand/planora-logo.png"
+              alt=""
+              width={256}
+              height={256}
+              sizes="(max-width: 640px) 48px, 56px"
+              className="h-[82%] w-[82%] object-contain"
+              priority
+              unoptimized
+            />
+          </span>
+          <span
+            className={cn(
+              'text-xl font-extrabold leading-tight text-brand antialiased sm:text-2xl',
+              locale === 'en' && 'tracking-tight'
+            )}
+          >
             {t('بلانورا', 'Planora')}
           </span>
         </Link>
@@ -93,12 +113,33 @@ export default function LandingPage() {
       <main>
         {/* Hero */}
         <section className="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6 sm:py-20 md:py-24">
-          <h1 className="mb-6 text-3xl font-extrabold leading-tight sm:text-4xl md:text-5xl lg:text-6xl">
-            {t(
-              'تحكم في مستقبلك المالي بذكاء مع بلانورا',
-              'Take control of your financial future with Planora'
-            )}
-          </h1>
+          <div className="mb-6 flex flex-col items-center justify-center gap-5 sm:mb-8 sm:flex-row sm:gap-6 md:gap-8">
+            <span
+              className={cn(
+                'relative flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white',
+                'shadow-lg shadow-brand/15 ring-1 ring-slate-200/80',
+                'sm:h-20 sm:w-20 md:h-24 md:w-24 md:rounded-[1.25rem] md:shadow-xl md:ring-black/[0.06]'
+              )}
+              aria-hidden
+            >
+              <Image
+                src="/brand/planora-logo.png"
+                alt=""
+                width={512}
+                height={512}
+                sizes="(max-width: 640px) 64px, (max-width: 768px) 80px, 96px"
+                className="h-[82%] w-[82%] object-contain"
+                priority
+                unoptimized
+              />
+            </span>
+            <h1 className="max-w-3xl text-center text-3xl font-extrabold leading-tight sm:text-start sm:text-4xl md:text-5xl lg:text-6xl">
+              {t(
+                'تحكم في مستقبلك المالي بذكاء مع بلانورا',
+                'Take control of your financial future with Planora'
+              )}
+            </h1>
+          </div>
           <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg md:text-xl">
             {t(
               'تتبع نفقاتك، أدر التزاماتك، وراقب نمو استثماراتك من لوحة تحكم واحدة مصممة لتمنحك حرية مالية أوضح.',
