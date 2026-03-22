@@ -59,7 +59,7 @@ export default function OnboardingPage() {
       return
     }
 
-    router.push('/')
+    router.push('/hub')
   }
 
   const { startLabel, endLabel } = formatPeriodRange(previewRefKey, startDay, locale)
