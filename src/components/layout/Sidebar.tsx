@@ -1,21 +1,32 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
-import { LogOut, X } from 'lucide-react'
+import { Headphones, LogOut, X } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { Logo } from '@/components/ui/Logo'
 import { appNavItems } from '@/config/navigation'
+import { ContactSupportModal } from '@/components/layout/ContactSupportModal'
 
 type SidebarProps = {
   mobileOpen: boolean
   onCloseMobile: () => void
 }
 
-function SidebarContent({ onNavigate, showCloseButton, onClose }: { onNavigate: () => void; showCloseButton: boolean; onClose: () => void }) {
+function SidebarContent({
+  onNavigate,
+  showCloseButton,
+  onClose,
+  onOpenSupport,
+}: {
+  onNavigate: () => void
+  showCloseButton: boolean
+  onClose: () => void
+  onOpenSupport: () => void
+}) {
   const { t } = useLanguage()
   const pathname = usePathname()
   const router = useRouter()
@@ -82,6 +93,26 @@ function SidebarContent({ onNavigate, showCloseButton, onClose }: { onNavigate: 
         <button
           type="button"
           onClick={() => {
+            onOpenSupport()
+          }}
+          className={cn(
+            'group/support flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-bold transition-all',
+            'text-slate-800 hover:bg-brand/10 hover:text-brand'
+          )}
+        >
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-slate-50 group-hover/support:bg-white">
+            <Headphones
+              size={20}
+              className="text-brand transition-colors"
+              strokeWidth={2.1}
+              aria-hidden
+            />
+          </span>
+          <span>{t('التواصل مع الدعم', 'Contact support')}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
             void handleSignOut()
           }}
           className={cn(
@@ -105,6 +136,8 @@ function SidebarContent({ onNavigate, showCloseButton, onClose }: { onNavigate: 
 
 export function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
   const { t } = useLanguage()
+  const [supportOpen, setSupportOpen] = useState(false)
+  const [supportToast, setSupportToast] = useState(false)
 
   const closeDrawer = () => onCloseMobile()
 
@@ -119,9 +152,38 @@ export function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
 
   return (
     <>
+      <ContactSupportModal
+        open={supportOpen}
+        onClose={() => setSupportOpen(false)}
+        onSuccess={() => {
+          setSupportToast(true)
+          window.setTimeout(() => setSupportToast(false), 5000)
+        }}
+      />
+      {supportToast ? (
+        <div
+          className="fixed bottom-6 left-1/2 z-[70] w-[min(100%,24rem)] -translate-x-1/2 px-4"
+          role="status"
+        >
+          <div
+            className={cn(
+              'rounded-xl border border-emerald-200 bg-white px-4 py-3 text-center text-sm font-semibold text-success shadow-lg',
+              'ring-1 ring-black/[0.04]'
+            )}
+          >
+            {t('تم إرسال رسالتك بنجاح.', 'Your message was sent successfully.')}
+          </div>
+        </div>
+      ) : null}
+
       {/* سطح المكتب */}
       <aside className="hidden w-[17rem] min-h-screen flex-col border-e border-border bg-white lg:flex">
-        <SidebarContent onNavigate={() => {}} showCloseButton={false} onClose={closeDrawer} />
+        <SidebarContent
+          onNavigate={() => {}}
+          showCloseButton={false}
+          onClose={closeDrawer}
+          onOpenSupport={() => setSupportOpen(true)}
+        />
       </aside>
 
       {/* جوال: خلفية + درج */}
@@ -142,7 +204,12 @@ export function Sidebar({ mobileOpen, onCloseMobile }: SidebarProps) {
             aria-modal="true"
             aria-label={t('القائمة الرئيسية', 'Main menu')}
           >
-            <SidebarContent onNavigate={closeDrawer} showCloseButton onClose={closeDrawer} />
+            <SidebarContent
+              onNavigate={closeDrawer}
+              showCloseButton
+              onClose={closeDrawer}
+              onOpenSupport={() => setSupportOpen(true)}
+            />
           </aside>
         </>
       ) : null}

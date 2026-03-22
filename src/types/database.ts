@@ -259,6 +259,27 @@ export interface Database {
         }
         Relationships: []
       }
+      support_messages: {
+        Row: {
+          id: string
+          user_id: string
+          email: string
+          message: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          email: string
+          message: string
+          created_at?: string
+        }
+        Update: {
+          email?: string
+          message?: string
+        }
+        Relationships: []
+      }
     }
     Views: Record<string, never>
     Functions: Record<string, never>
@@ -275,3 +296,4 @@ export type SavingsGoal = Database['public']['Tables']['savings_goals']['Row']
 export type SavingsTransaction = Database['public']['Tables']['savings_transactions']['Row']
 export type Investment = Database['public']['Tables']['investments']['Row']
 export type InvestmentWalletTransaction = Database['public']['Tables']['investment_wallet_transactions']['Row']
+export type SupportMessage = Database['public']['Tables']['support_messages']['Row']
