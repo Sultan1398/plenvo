@@ -34,6 +34,9 @@ export async function updateSession(request: NextRequest) {
 
   /** صفحة الهبوط عامة لكل الزوار؛ صفحات الدخول/التسجيل فقط تُعاد توجيه المستخدم المسجّل منها */
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup')
+  const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
+  const isAdmin = user?.user_metadata?.role === 'admin'
+  const defaultAuthedPath = isAdmin ? '/admin' : '/hub'
   const allowWithoutAuth = pathname === '/' || isAuthRoute
 
   if (!user && !allowWithoutAuth) {
@@ -44,11 +47,17 @@ export async function updateSession(request: NextRequest) {
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/hub'
+    url.pathname = defaultAuthedPath
     return NextResponse.redirect(url)
   }
 
   if (user && pathname === '/') {
+    const url = request.nextUrl.clone()
+    url.pathname = defaultAuthedPath
+    return NextResponse.redirect(url)
+  }
+
+  if (user && isAdminRoute && !isAdmin) {
     const url = request.nextUrl.clone()
     url.pathname = '/hub'
     return NextResponse.redirect(url)
