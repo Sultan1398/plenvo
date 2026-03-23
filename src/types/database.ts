@@ -14,6 +14,10 @@ export interface Database {
           id: string
           period_start_day: number
           period_start_month: number
+          used_web: boolean
+          used_android: boolean
+          used_ios: boolean
+          subscription_status: string
           created_at: string
           updated_at: string
         }
@@ -21,6 +25,10 @@ export interface Database {
           id: string
           period_start_day?: number
           period_start_month?: number
+          used_web?: boolean
+          used_android?: boolean
+          used_ios?: boolean
+          subscription_status?: string
           created_at?: string
           updated_at?: string
         }
@@ -28,6 +36,10 @@ export interface Database {
           id?: string
           period_start_day?: number
           period_start_month?: number
+          used_web?: boolean
+          used_android?: boolean
+          used_ios?: boolean
+          subscription_status?: string
           updated_at?: string
         }
         Relationships: []
@@ -277,6 +289,28 @@ export interface Database {
         Update: {
           email?: string
           message?: string
+        }
+        Relationships: []
+      }
+      app_error_logs: {
+        Row: {
+          id: string
+          message: string
+          details: Json | null
+          user_id: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          message: string
+          details?: Json | null
+          user_id?: string | null
+          created_at?: string
+        }
+        Update: {
+          message?: string
+          details?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
