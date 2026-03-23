@@ -57,7 +57,7 @@ export function Logo({ size = 'md', showName = true, className }: LogoProps) {
         style={{ width: cfg.img, height: cfg.img }}
       >
         <Image
-          src="/brand/planora-logo.png"
+          src="/brand/Planora-logo.svg"
           alt={locale === 'ar' ? 'شعار بلانورا' : 'Planora logo'}
           width={cfg.img}
           height={cfg.img}

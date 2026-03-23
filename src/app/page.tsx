@@ -72,7 +72,7 @@ export default function LandingPage() {
             )}
           >
             <Image
-              src="/brand/planora-logo.png"
+              src="/brand/Planora-logo.svg"
               alt=""
               width={256}
               height={256}
@@ -123,7 +123,7 @@ export default function LandingPage() {
               aria-hidden
             >
               <Image
-                src="/brand/planora-logo.png"
+                src="/brand/Planora-logo.svg"
                 alt=""
                 width={512}
                 height={512}

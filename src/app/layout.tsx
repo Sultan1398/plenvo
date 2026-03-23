@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: 'Planora — Personal Finance Flow',
   description: 'Track your income, expenses, savings, and investments across dynamic financial periods.',
   icons: {
-    icon: '/brand/planora-logo.png',
-    apple: '/brand/planora-logo.png',
+    icon: '/icon.png',
+    apple: '/icon.png',
   },
 }
 
