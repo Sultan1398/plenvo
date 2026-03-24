@@ -38,10 +38,12 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/signup') ||
     pathname.startsWith('/forgot-password')
   const isResetPasswordRoute = pathname.startsWith('/reset-password')
+  const isAuthCallbackRoute = pathname.startsWith('/auth/callback')
   const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
   const isAdmin = user?.user_metadata?.role === 'admin'
   const defaultAuthedPath = isAdmin ? '/admin' : '/hub'
-  const allowWithoutAuth = pathname === '/' || isEntryAuthRoute || isResetPasswordRoute
+  const allowWithoutAuth =
+    pathname === '/' || isEntryAuthRoute || isResetPasswordRoute || isAuthCallbackRoute
 
   if (!user && !allowWithoutAuth) {
     const url = request.nextUrl.clone()
