@@ -4,6 +4,10 @@
  */
 export function getSiteUrl(): string {
   if (typeof window !== 'undefined') {
+    const canonical = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
+    if (process.env.NODE_ENV === 'production' && canonical) {
+      return canonical
+    }
     return window.location.origin
   }
   const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim()

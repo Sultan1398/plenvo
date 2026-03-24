@@ -4,10 +4,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MailCheck } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
-import { sendPasswordResetEmail } from '@/app/actions/forgot-password'
 import { mapAuthError } from '@/lib/utils/auth-errors'
+import { getSiteUrl } from '@/lib/utils/url'
 
 export default function ForgotPasswordPage() {
   const { t, toggleLocale, locale } = useLanguage()
@@ -22,11 +23,14 @@ export default function ForgotPasswordPage() {
     setError('')
     setLoading(true)
     try {
-      const result = await sendPasswordResetEmail(email)
-      if (!result.ok) {
-        setError(result.message)
-        return
-      }
+      // يجب استدعاء resetPasswordForEmail من المتصفح (createBrowserClient) حتى يُخزَّن
+      // code_verifier لـ PKCE في الكوكيز؛ استدعاء الخادم فقط يفشل exchangeCodeForSession ويظهر خطأ الرابط.
+      const supabase = createClient()
+      const origin = getSiteUrl()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+        redirectTo: `${origin}/auth/callback`,
+      })
+      if (resetError) throw new Error(resetError.message)
       setIsSubmitted(true)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
