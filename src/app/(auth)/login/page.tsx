@@ -1,42 +1,46 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
+import { mapAuthError } from '@/lib/utils/auth-errors'
 
 export default function LoginPage() {
   const { t, toggleLocale, locale } = useLanguage()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const callbackError = searchParams.get('error')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
     setLoading(true)
+    try {
+      const supabase = createClient()
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      if (authError) throw new Error(authError.message)
 
-    const supabase = createClient()
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password })
+      await supabase.auth.refreshSession()
+      const {
+        data: { user: refreshedUser },
+      } = await supabase.auth.getUser()
 
-    if (authError) {
-      setError(authError.message)
+      const role = refreshedUser?.user_metadata?.role ?? data.user?.user_metadata?.role
+      router.push(role === 'admin' ? '/admin' : '/hub')
+      router.refresh()
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(mapAuthError(message))
+    } finally {
       setLoading(false)
-      return
     }
-
-    await supabase.auth.refreshSession()
-    const {
-      data: { user: refreshedUser },
-    } = await supabase.auth.getUser()
-
-    const role = refreshedUser?.user_metadata?.role ?? data.user?.user_metadata?.role
-    router.push(role === 'admin' ? '/admin' : '/hub')
-    router.refresh()
   }
 
   return (
@@ -64,6 +68,15 @@ export default function LoginPage() {
           <p className="text-muted text-center text-sm mb-8">
             {t('سجّل دخولك لمتابعة أموالك', 'Sign in to manage your finances')}
           </p>
+
+          {callbackError ? (
+            <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+              {t(
+                'رابط استعادة كلمة المرور غير صالح أو منتهي الصلاحية.',
+                'Password recovery link is invalid or expired.'
+              )}
+            </div>
+          ) : null}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>

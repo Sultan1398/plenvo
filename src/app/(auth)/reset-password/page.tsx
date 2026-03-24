@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
+import { mapAuthError } from '@/lib/utils/auth-errors'
 
 export default function ResetPasswordPage() {
   const { t, toggleLocale, locale } = useLanguage()
@@ -16,10 +17,35 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [isUpdated, setIsUpdated] = useState(false)
+  const [hasRecoverySession, setHasRecoverySession] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    let mounted = true
+    ;(async () => {
+      const supabase = createClient()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (!mounted) return
+      const ok = Boolean(session)
+      setHasRecoverySession(ok)
+      if (!ok) {
+        setError(mapAuthError('invalid_recovery_code'))
+      }
+    })()
+    return () => {
+      mounted = false
+    }
+  }, [])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
+
+    if (hasRecoverySession === false) {
+      setError(mapAuthError('invalid_recovery_code'))
+      return
+    }
 
     if (password !== confirm) {
       setError(t('كلمتا المرور غير متطابقتين', 'Passwords do not match'))
@@ -32,17 +58,17 @@ export default function ResetPasswordPage() {
     }
 
     setLoading(true)
-    const supabase = createClient()
-    const { error: updateError } = await supabase.auth.updateUser({ password })
-
-    if (updateError) {
-      setError(updateError.message)
+    try {
+      const supabase = createClient()
+      const { error: updateError } = await supabase.auth.updateUser({ password })
+      if (updateError) throw new Error(updateError.message)
+      setIsUpdated(true)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(mapAuthError(message))
+    } finally {
       setLoading(false)
-      return
     }
-
-    setIsUpdated(true)
-    setLoading(false)
   }
 
   return (
@@ -136,7 +162,7 @@ export default function ResetPasswordPage() {
 
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || hasRecoverySession === false}
                   className="w-full bg-brand text-white py-2.5 rounded-xl font-medium hover:bg-brand-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {loading ? t('جاري التحديث...', 'Updating...') : t('حفظ كلمة المرور الجديدة', 'Save new password')}

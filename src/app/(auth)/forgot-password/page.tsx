@@ -7,6 +7,7 @@ import { MailCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
+import { mapAuthError } from '@/lib/utils/auth-errors'
 
 export default function ForgotPasswordPage() {
   const { t, toggleLocale, locale } = useLanguage()
@@ -20,20 +21,19 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
-    const supabase = createClient()
-    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
-    })
-
-    if (resetError) {
-      setError(resetError.message)
+    try {
+      const supabase = createClient()
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+      })
+      if (resetError) throw new Error(resetError.message)
+      setIsSubmitted(true)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      setError(mapAuthError(message))
+    } finally {
       setLoading(false)
-      return
     }
-
-    setIsSubmitted(true)
-    setLoading(false)
   }
 
   return (

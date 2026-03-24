@@ -1,6 +1,5 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse, type NextRequest } from 'next/server'
-import type { Database } from '@/types/database'
+import { NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
 
 function sanitizeNextPath(nextRaw: string | null): string {
   if (!nextRaw) return '/hub'
@@ -9,39 +8,18 @@ function sanitizeNextPath(nextRaw: string | null): string {
   return nextRaw
 }
 
-export async function GET(request: NextRequest) {
-  const url = request.nextUrl
-  const code = url.searchParams.get('code')
-  const nextPath = sanitizeNextPath(url.searchParams.get('next'))
-
-  const redirectUrl = url.clone()
-  redirectUrl.pathname = nextPath
-  redirectUrl.search = ''
-
-  let response = NextResponse.redirect(redirectUrl)
-
-  const supabase = createServerClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
-          response = NextResponse.redirect(redirectUrl)
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
+export async function GET(request: Request) {
+  const requestUrl = new URL(request.url)
+  const code = requestUrl.searchParams.get('code')
+  const next = sanitizeNextPath(requestUrl.searchParams.get('next'))
 
   if (code) {
-    await supabase.auth.exchangeCodeForSession(code)
+    const supabase = await createClient()
+    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    if (!error) {
+      return NextResponse.redirect(`${requestUrl.origin}${next}`)
+    }
   }
 
-  return response
+  return NextResponse.redirect(`${requestUrl.origin}/login?error=Invalid_recovery_code`)
 }
