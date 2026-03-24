@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -8,7 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
 import { mapAuthError } from '@/lib/utils/auth-errors'
 
-export default function LoginPage() {
+function LoginPageContent() {
   const { t, toggleLocale, locale } = useLanguage()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -138,5 +138,19 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-surface px-4 text-sm text-muted">
+          جاري التحميل...
+        </div>
+      }
+    >
+      <LoginPageContent />
+    </Suspense>
   )
 }
