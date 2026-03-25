@@ -38,6 +38,14 @@ const outflowNav = getAppNavItem('/outflow')
 
 type Tab = 'general' | 'obligations'
 
+type ObligationPaymentRow = {
+  amount: number
+  date: string
+  obligation_id?: string | null
+  name_ar?: string | null
+  name_en?: string | null
+}
+
 export default function OutflowPage() {
   const { t, locale } = useLanguage()
   const { periodKey, periodDates } = usePeriod()
@@ -54,32 +62,70 @@ export default function OutflowPage() {
   const [editingObligation, setEditingObligation] = useState<Obligation | null>(null)
   const [payObligation, setPayObligation] = useState<Obligation | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  /** لحساب السداد عبر علامة الاسم (بدون عمود paid_amount) */
-  const [outflowsForObligationMarkers, setOutflowsForObligationMarkers] = useState<
-    Array<{ amount: number; name_ar?: string | null; name_en?: string | null }>
-  >([])
+  /** جميع سدادات الالتزامات حتى نهاية الفترة الحالية لاشتقاق الرصيد المرحّل + سداد الفترة */
+  const [obligationPaymentOutflows, setObligationPaymentOutflows] = useState<ObligationPaymentRow[]>([])
 
   const start = dateToLocalISODate(periodDates.start)
   const end = dateToLocalISODate(periodDates.end)
 
-  const totalObligations = useMemo(
-    () => obligations.reduce((sum, row) => sum + Number(row.amount), 0),
-    [obligations]
-  )
+  const { totalObligations, totalPaid, totalRemaining } = useMemo(() => {
+    const paymentsBeforeByObligation = new Map<string, number>()
+    const paymentsInPeriodByObligation = new Map<string, number>()
 
-  const totalPaid = useMemo(
-    () =>
-      obligations.reduce((sum, row) => {
-        const markerPaid = sumLegacyMarkerPayments(outflowsForObligationMarkers, row.id)
-        return sum + obligationPaidAmount(row, markerPaid)
-      }, 0),
-    [obligations, outflowsForObligationMarkers]
-  )
+    for (const payment of obligationPaymentOutflows) {
+      let obligationId = payment.obligation_id ?? null
+      if (!obligationId) {
+        const hay = `${payment.name_ar ?? ''}\n${payment.name_en ?? ''}`
+        const match = hay.match(/\[\[planora-obl:([a-f0-9-]{36})\]\]/i)
+        obligationId = match?.[1] ?? null
+      }
+      if (!obligationId) continue
 
-  const totalRemaining = useMemo(
-    () => Math.max(0, totalObligations - totalPaid),
-    [totalObligations, totalPaid]
-  )
+      const amount = Number(payment.amount) || 0
+      if (payment.date < start) {
+        paymentsBeforeByObligation.set(
+          obligationId,
+          (paymentsBeforeByObligation.get(obligationId) ?? 0) + amount
+        )
+      } else if (payment.date >= start && payment.date <= end) {
+        paymentsInPeriodByObligation.set(
+          obligationId,
+          (paymentsInPeriodByObligation.get(obligationId) ?? 0) + amount
+        )
+      }
+    }
+
+    let carryoverRemaining = 0
+    let newInPeriod = 0
+    let paidInPeriod = 0
+
+    for (const row of obligations) {
+      // لا نحسب التزامات لم تولد بعد نهاية الفترة المختارة
+      if (row.date > end) continue
+
+      const total = Number(row.amount) || 0
+      const paidBefore = paymentsBeforeByObligation.get(row.id) ?? 0
+      const paidNow = paymentsInPeriodByObligation.get(row.id) ?? 0
+
+      const openingRemaining = Math.max(0, total - paidBefore)
+      if (row.date < start) {
+        carryoverRemaining += openingRemaining
+      } else {
+        newInPeriod += total
+      }
+
+      // "المسدد" يخص فقط هذه الفترة وبحد أعلى الرصيد المتاح للفترة
+      paidInPeriod += Math.min(paidNow, openingRemaining)
+    }
+
+    const periodTotal = carryoverRemaining + newInPeriod
+    const periodPaid = Math.min(periodTotal, paidInPeriod)
+    return {
+      totalObligations: periodTotal,
+      totalPaid: periodPaid,
+      totalRemaining: Math.max(0, periodTotal - periodPaid),
+    }
+  }, [obligations, obligationPaymentOutflows, start, end])
 
   const reload = useCallback(async (isStillMounted: () => boolean = () => true) => {
     if (!isStillMounted()) return
@@ -93,13 +139,13 @@ export default function OutflowPage() {
     if (!user) {
       setOutflows([])
       setObligations([])
-      setOutflowsForObligationMarkers([])
+      setObligationPaymentOutflows([])
       setAvailableCash(null)
       setLoading(false)
       return
     }
 
-    const [outRes, oblRes, markerRes] = await Promise.all([
+    const [outRes, oblRes, paymentsRes] = await Promise.all([
       supabase
         .from('outflows')
         .select('*')
@@ -112,23 +158,23 @@ export default function OutflowPage() {
         .from('obligations')
         .select('*')
         .eq('user_id', user.id)
+        .lte('date', end)
         .order('due_date', { ascending: true }),
       supabase
         .from('outflows')
-        .select('amount, name_ar, name_en')
-        .eq('user_id', user.id),
+        .select('amount, date, obligation_id, name_ar, name_en')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+        .lte('date', end),
     ])
 
     if (!isStillMounted()) return
 
-    if (markerRes.error) {
-      setError((prev) => (prev ? `${prev} · ${markerRes.error!.message}` : markerRes.error!.message))
-      setOutflowsForObligationMarkers([])
+    if (paymentsRes.error) {
+      setError((prev) => (prev ? `${prev} · ${paymentsRes.error!.message}` : paymentsRes.error!.message))
+      setObligationPaymentOutflows([])
     } else {
-      setOutflowsForObligationMarkers(
-        (markerRes.data as Array<{ amount: number; name_ar?: string | null; name_en?: string | null }> | null) ??
-          []
-      )
+      setObligationPaymentOutflows((paymentsRes.data as ObligationPaymentRow[] | null) ?? [])
     }
 
     if (outRes.error) {
@@ -162,7 +208,11 @@ export default function OutflowPage() {
   useEffect(() => {
     let isMounted = true
     const isStillMounted = () => isMounted
-    void reload(isStillMounted)
+    // تأجيل الجلب عن جسم الـ effect لتفادي setState متزامن (قواعد React Compiler / ESLint)
+    queueMicrotask(() => {
+      if (!isMounted) return
+      void reload(isStillMounted)
+    })
     return () => {
       isMounted = false
     }
@@ -202,7 +252,7 @@ export default function OutflowPage() {
   }
 
   async function deleteObligation(row: Obligation) {
-    const markerPaid = sumLegacyMarkerPayments(outflowsForObligationMarkers, row.id)
+    const markerPaid = sumLegacyMarkerPayments(obligationPaymentOutflows, row.id)
     if (obligationPaidAmount(row, markerPaid) > 0.0001) {
       alert(
         t('لا يمكن حذف التزام تم سداد جزء منه', 'Cannot delete an obligation that has payments recorded')
@@ -414,7 +464,7 @@ export default function OutflowPage() {
               <ul className="flex flex-col gap-5 sm:gap-6" role="list">
                 {obligations.map((row) => {
                   const total = Number(row.amount)
-                  const markerPaid = sumLegacyMarkerPayments(outflowsForObligationMarkers, row.id)
+                  const markerPaid = sumLegacyMarkerPayments(obligationPaymentOutflows, row.id)
                   const paid = obligationPaidAmount(row, markerPaid)
                   const rem = obligationRemaining(row, markerPaid)
                   const pct = total > 0 ? Math.min(100, (paid / total) * 100) : 0
@@ -551,7 +601,7 @@ export default function OutflowPage() {
         edit={editingObligation}
         markerPaidSum={
           editingObligation
-            ? sumLegacyMarkerPayments(outflowsForObligationMarkers, editingObligation.id)
+            ? sumLegacyMarkerPayments(obligationPaymentOutflows, editingObligation.id)
             : 0
         }
         periodStart={periodDates.start}
@@ -565,7 +615,7 @@ export default function OutflowPage() {
         obligation={payObligation}
         markerPaidSum={
           payObligation
-            ? sumLegacyMarkerPayments(outflowsForObligationMarkers, payObligation.id)
+            ? sumLegacyMarkerPayments(obligationPaymentOutflows, payObligation.id)
             : 0
         }
         periodStart={periodDates.start}

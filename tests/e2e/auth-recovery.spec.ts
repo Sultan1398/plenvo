@@ -8,6 +8,8 @@ import { test, expect } from '@playwright/test'
  * This keeps the suite isolated from production data mutations.
  */
 
+test.use({ storageState: { cookies: [], origins: [] } })
+
 test.describe('Auth Recovery Safety Net', () => {
   test('invalid callback code redirects to login with translated recovery error', async ({ page }) => {
     await page.goto('/auth/callback?next=/reset-password')
