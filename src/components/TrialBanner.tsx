@@ -10,7 +10,6 @@ type TrialBannerProps = {
   userId: string
   subscriptionStatus: SubscriptionStatus | 'inactive'
   trialEndsAt: string | null
-  subscribeHref?: string
   onStatusChange?: (next: SubscriptionStatus | 'inactive') => void
 }
 
@@ -20,7 +19,6 @@ export function TrialBanner({
   userId,
   subscriptionStatus,
   trialEndsAt,
-  subscribeHref = '/settings',
   onStatusChange,
 }: TrialBannerProps) {
   const { t } = useLanguage()
@@ -74,10 +72,10 @@ export function TrialBanner({
         </p>
 
         <Link
-          href={subscribeHref}
+          href="#"
           className="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
         >
-          {t('اشترك الآن', 'Subscribe now')}
+          {t('اشترك عبر تطبيق الجوال', 'Subscribe via mobile app')}
         </Link>
       </div>
     </div>

@@ -9,14 +9,12 @@ type SubscriptionGateProps = {
   userId: string
   initialStatus: SubscriptionStatus | 'inactive'
   trialEndsAt: string | null
-  subscribeHref?: string
 }
 
 export function SubscriptionGate({
   userId,
   initialStatus,
   trialEndsAt,
-  subscribeHref = '/settings',
 }: SubscriptionGateProps) {
   const [status, setStatus] = useState<SubscriptionStatus | 'inactive'>(initialStatus)
 
@@ -26,10 +24,9 @@ export function SubscriptionGate({
         userId={userId}
         subscriptionStatus={status}
         trialEndsAt={trialEndsAt}
-        subscribeHref={subscribeHref}
         onStatusChange={setStatus}
       />
-      <PaywallModal subscriptionStatus={status} subscribeHref={subscribeHref} />
+      <PaywallModal subscriptionStatus={status} />
     </>
   )
 }
