@@ -5,6 +5,7 @@ export type Json =
   | null
   | { [key: string]: Json | undefined }
   | Json[]
+export type SubscriptionStatus = 'trialing' | 'active' | 'expired' | 'canceled'
 
 export interface Database {
   public: {
@@ -18,7 +19,8 @@ export interface Database {
           used_android: boolean
           used_ios: boolean
           platforms_used: string[]
-          subscription_status: string
+          subscription_status: SubscriptionStatus
+          trial_ends_at: string
           created_at: string
           updated_at: string
         }
@@ -30,7 +32,8 @@ export interface Database {
           used_android?: boolean
           used_ios?: boolean
           platforms_used?: string[]
-          subscription_status?: string
+          subscription_status?: SubscriptionStatus
+          trial_ends_at?: string
           created_at?: string
           updated_at?: string
         }
@@ -42,7 +45,8 @@ export interface Database {
           used_android?: boolean
           used_ios?: boolean
           platforms_used?: string[]
-          subscription_status?: string
+          subscription_status?: SubscriptionStatus
+          trial_ends_at?: string
           updated_at?: string
         }
         Relationships: []

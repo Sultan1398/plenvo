@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin'
-import type { Json } from '@/types/database'
+import type { Json, SubscriptionStatus } from '@/types/database'
 
 export type AdminDashboardStats = {
   totalUsers: number
@@ -17,7 +17,7 @@ export type AdminUserRow = {
   id: string
   email: string
   created_at: string
-  subscription_status: string
+  subscription_status: SubscriptionStatus | 'inactive'
   platforms_used: string[]
   used_web: boolean
   used_android: boolean

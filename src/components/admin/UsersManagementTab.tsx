@@ -114,9 +114,9 @@ export function UsersManagementTab({ users }: { users: AdminUserRow[] }) {
                       <span
                         className={cn(
                           'inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold',
-                          u.subscription_status.toLowerCase() === 'active'
+                          u.subscription_status === 'active'
                             ? 'bg-emerald-100 text-emerald-700'
-                            : u.subscription_status.toLowerCase() === 'trial'
+                            : u.subscription_status === 'trialing'
                               ? 'bg-blue-100 text-blue-700'
                               : 'bg-slate-100 text-slate-700'
                         )}
