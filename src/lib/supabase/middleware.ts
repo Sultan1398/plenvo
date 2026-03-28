@@ -45,7 +45,9 @@ export async function updateSession(request: NextRequest) {
     pathname === '/privacy' ||
     pathname.startsWith('/privacy/') ||
     pathname === '/terms' ||
-    pathname.startsWith('/terms/')
+    pathname.startsWith('/terms/') ||
+    pathname === '/how-it-works' ||
+    pathname.startsWith('/how-it-works/')
   const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
   const isAdmin = user?.user_metadata?.role === 'admin'
   const defaultAuthedPath = isAdmin ? '/admin' : '/hub'

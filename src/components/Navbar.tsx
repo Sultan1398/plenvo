@@ -90,6 +90,7 @@ export function Navbar() {
           )}
         >
           <div className="flex shrink-0 items-center gap-4 sm:gap-6 lg:gap-8">
+            <NavTextLink href="/how-it-works">{t('كيف يعمل بلانورا؟', 'How Planura Works?')}</NavTextLink>
             <NavTextLink href="/#features">{t('أقسام بلانورا', 'Planora sections')}</NavTextLink>
             <NavTextLink href="/blog">{t('المدونة', 'Blog')}</NavTextLink>
             <NavTextLink href="mailto:customerservice@planora.app" external>

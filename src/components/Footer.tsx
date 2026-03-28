@@ -106,6 +106,9 @@ export function Footer() {
             <FooterHeading>{t('التطبيق', 'App')}</FooterHeading>
             <ul className="space-y-3">
               <li>
+                <FooterLink href="/how-it-works">{t('كيف يعمل بلانورا؟', 'How Planura Works?')}</FooterLink>
+              </li>
+              <li>
                 <FooterLink href="/#features">{t('المميزات', 'Features')}</FooterLink>
               </li>
               <li>
