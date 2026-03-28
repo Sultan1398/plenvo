@@ -40,6 +40,12 @@ export async function updateSession(request: NextRequest) {
   // يجب أن تبقى صفحة reset-password متاحة بدون جلسة كاملة (Recovery Session)
   const isResetPasswordRoute = pathname.startsWith('/reset-password')
   const isAuthCallbackRoute = pathname.startsWith('/auth/callback')
+  /** صفحات قانونية/تسويقية عامة (بدون تسجيل دخول) */
+  const isPublicLegalRoute =
+    pathname === '/privacy' ||
+    pathname.startsWith('/privacy/') ||
+    pathname === '/terms' ||
+    pathname.startsWith('/terms/')
   const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
   const isAdmin = user?.user_metadata?.role === 'admin'
   const defaultAuthedPath = isAdmin ? '/admin' : '/hub'
@@ -47,7 +53,8 @@ export async function updateSession(request: NextRequest) {
     pathname === '/' ||
     isEntryAuthRoute ||
     isResetPasswordRoute ||
-    isAuthCallbackRoute
+    isAuthCallbackRoute ||
+    isPublicLegalRoute
 
   if (!user && !allowWithoutAuth) {
     const url = request.nextUrl.clone()
