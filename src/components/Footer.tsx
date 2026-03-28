@@ -122,9 +122,6 @@ export function Footer() {
             <FooterHeading>{t('الموارد', 'Resources')}</FooterHeading>
             <ul className="space-y-3">
               <li>
-                <FooterLink href="#">{t('المدونة', 'Blog')}</FooterLink>
-              </li>
-              <li>
                 <FooterLink href="mailto:customerservice@planora.app" external>
                   {t('تواصل معنا', 'Contact us')}
                 </FooterLink>
