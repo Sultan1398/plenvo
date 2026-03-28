@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import { Footer } from '@/components/Footer'
 import { Navbar } from '@/components/Navbar'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
@@ -224,7 +225,10 @@ export default function LandingPage() {
         </div>
 
         {/* Pricing */}
-        <section className="border-t border-slate-200 bg-slate-50 py-16 sm:py-20 md:py-24">
+        <section
+          id="pricing"
+          className="scroll-mt-28 border-t border-slate-200 bg-slate-50 py-16 sm:scroll-mt-32 sm:py-20 md:py-24"
+        >
           <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
             <h2 className="mb-10 text-2xl font-bold sm:text-3xl md:mb-12 md:text-4xl">
               {t('استثمار بسيط في مستقبلك المالي', 'A simple investment in your financial future')}
@@ -264,11 +268,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200 px-6 py-10 text-center text-slate-500 sm:py-12">
-        <p className="text-sm">
-          {t('© ٢٠٢٦ بلانورا. جميع الحقوق محفوظة.', '© 2026 Planora. All rights reserved.')}
-        </p>
-      </footer>
+      <Footer />
     </div>
   )
 }
