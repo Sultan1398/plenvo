@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { Footer } from '@/components/Footer'
+import { Navbar } from '@/components/Navbar'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 
@@ -131,53 +133,59 @@ export default function PrivacyPage() {
   const c = content[lang]
 
   return (
-    <div
-      className="min-h-screen bg-slate-50 text-slate-900"
-      dir={lang === 'ar' ? 'rtl' : 'ltr'}
-    >
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-        <Link
-          href="/"
-          className={cn(
-            'mb-8 inline-flex text-sm font-semibold text-brand transition-colors hover:text-brand-dark',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 focus-visible:ring-offset-2 rounded-lg'
-          )}
+    <div className="flex min-h-screen flex-col bg-gray-50/50 text-slate-900">
+      <Navbar />
+
+      <main className="flex grow flex-col">
+        <div
+          className="mx-auto w-full max-w-3xl flex-1 px-4 pb-10 pt-[5.5rem] sm:px-6 sm:pb-14 sm:pt-24"
+          dir={lang === 'ar' ? 'rtl' : 'ltr'}
         >
-          {c.backButton}
-        </Link>
+          <Link
+            href="/"
+            className={cn(
+              'mb-8 inline-flex text-sm font-semibold text-brand transition-colors hover:text-brand-dark',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/30 focus-visible:ring-offset-2 rounded-lg'
+            )}
+          >
+            {c.backButton}
+          </Link>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-          <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{c.title}</h1>
-          <p className="mt-3 text-sm text-slate-500">{c.lastUpdated}</p>
-          <p className="mt-8 text-base leading-relaxed text-slate-700">{c.intro}</p>
+          <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
+            <h1 className="text-2xl font-extrabold text-slate-900 sm:text-3xl">{c.title}</h1>
+            <p className="mt-3 text-sm text-slate-500">{c.lastUpdated}</p>
+            <p className="mt-8 text-base leading-relaxed text-slate-700">{c.intro}</p>
 
-          <div className="mt-10 space-y-10">
-            {c.sections.map((section) => (
-              <section key={section.title}>
-                <h2 className="text-lg font-bold text-slate-900 sm:text-xl">{section.title}</h2>
-                <p className="mt-3 text-base leading-relaxed text-slate-700">{section.text}</p>
-                <ul className="mt-4 list-disc space-y-2 ps-5 text-base leading-relaxed text-slate-700">
-                  {section.points.map((point) => (
-                    <li key={point}>
-                      {point.includes('@') ? (
-                        <a
-                          href={`mailto:${point}`}
-                          className="font-medium text-brand underline-offset-2 hover:underline"
-                          dir="ltr"
-                        >
-                          {point}
-                        </a>
-                      ) : (
-                        point
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-        </article>
-      </div>
+            <div className="mt-10 space-y-10">
+              {c.sections.map((section) => (
+                <section key={section.title}>
+                  <h2 className="text-lg font-bold text-slate-900 sm:text-xl">{section.title}</h2>
+                  <p className="mt-3 text-base leading-relaxed text-slate-700">{section.text}</p>
+                  <ul className="mt-4 list-disc space-y-2 ps-5 text-base leading-relaxed text-slate-700">
+                    {section.points.map((point) => (
+                      <li key={point}>
+                        {point.includes('@') ? (
+                          <a
+                            href={`mailto:${point}`}
+                            className="font-medium text-brand underline-offset-2 hover:underline"
+                            dir="ltr"
+                          >
+                            {point}
+                          </a>
+                        ) : (
+                          point
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </article>
+        </div>
+      </main>
+
+      <Footer />
     </div>
   )
 }
