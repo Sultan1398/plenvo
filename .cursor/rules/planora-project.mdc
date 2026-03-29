@@ -6,7 +6,7 @@ alwaysApply: true
 # Planora — Personal Finance Flow App
 
 ## Project Summary
-Bilingual (Arabic RTL / English LTR) personal finance web app. Users track income, expenses, obligations, savings goals, and investments across **dynamic financial periods** tied to their salary cycle.
+Bilingual (Arabic RTL / English LTR) personal finance web app. Users track income, expenses, obligations, growth (savings goals, deposits, fixed assets), and investments across **dynamic financial periods** tied to their salary cycle.
 
 ## Tech Stack
 - **Framework**: Next.js 15 (App Router) + TypeScript
@@ -25,7 +25,7 @@ src/
       hub/              # المحفظة — Cash on Hand overview
       inflow/           # الدخل — Income sources
       outflow/          # المصروف — Expenses & obligations
-      savings/          # المدخرات — Savings goals
+      growth/           # النمو — Savings goals, fixed deposits, fixed assets
       investments/      # الاستثمارات — Investment deals
       dashboard/        # التحليل — Charts & KPIs
       statistics/       # إحصاءات العام — 12-period year table
@@ -41,6 +41,7 @@ src/
     database.ts         # Full Supabase DB type definitions
   components/
     layout/             # Sidebar, PeriodNavigator
+    growth/             # Growth modals (goals, deposits, assets)
     ui/                 # Reusable UI components
 supabase/
   migrations/           # SQL migration files

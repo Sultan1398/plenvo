@@ -19,8 +19,8 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { PeriodNavigator } from '@/components/layout/PeriodNavigator'
 import { FixedAssetModal, displayAssetType } from '@/components/growth/FixedAssetModal'
 import { FixedDepositModal } from '@/components/growth/FixedDepositModal'
-import { SavingsGoalFormModal } from '@/components/savings/SavingsGoalFormModal'
-import { SavingsTransactionModal } from '@/components/savings/SavingsTransactionModal'
+import { SavingsGoalFormModal } from '@/components/growth/SavingsGoalFormModal'
+import { SavingsTransactionModal } from '@/components/growth/SavingsTransactionModal'
 import { getAppNavItem } from '@/config/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { parseLocalISODate } from '@/lib/date-local'
@@ -87,7 +87,7 @@ export default function GrowthPage() {
 
       const uid = user.id
 
-      const [savingsRes, depositsRes, assetsRes] = await Promise.all([
+      const [goalsRes, depositsRes, assetsRes] = await Promise.all([
         supabase.from('savings_goals').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
         supabase
           .from('fixed_deposits')
@@ -105,12 +105,12 @@ export default function GrowthPage() {
       if (!isStillMounted()) return
 
       const errs: string[] = []
-      if (savingsRes.error) errs.push(savingsRes.error.message)
+      if (goalsRes.error) errs.push(goalsRes.error.message)
       if (depositsRes.error) errs.push(depositsRes.error.message)
       if (assetsRes.error) errs.push(assetsRes.error.message)
       setFetchError(errs.join(' · '))
 
-      setGoals(savingsRes.error ? [] : ((savingsRes.data as SavingsGoal[] | null) ?? []))
+      setGoals(goalsRes.error ? [] : ((goalsRes.data as SavingsGoal[] | null) ?? []))
       setFixedDeposits(depositsRes.error ? [] : ((depositsRes.data as FixedDeposit[] | null) ?? []))
       setFixedAssets(assetsRes.error ? [] : ((assetsRes.data as FixedAsset[] | null) ?? []))
 
