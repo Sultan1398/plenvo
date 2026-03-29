@@ -4,6 +4,7 @@ import {
   TrendingUp,
   TrendingDown,
   Coins,
+  Sprout,
   LineChart,
   Settings,
 } from 'lucide-react'
@@ -76,6 +77,19 @@ export const appNavItems: AppNavItem[] = [
       bgActive: 'bg-amber-50',
       textActive: 'text-amber-950',
       ringActive: 'ring-amber-200/80',
+    },
+  },
+  {
+    href: '/growth',
+    icon: Sprout,
+    labelAr: 'النمو',
+    labelEn: 'Growth',
+    accent: {
+      icon: 'text-teal-600',
+      iconActive: 'text-teal-700',
+      bgActive: 'bg-teal-50',
+      textActive: 'text-teal-950',
+      ringActive: 'ring-teal-200/80',
     },
   },
   {

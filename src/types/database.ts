@@ -278,6 +278,66 @@ export interface Database {
         }
         Relationships: []
       }
+      fixed_deposits: {
+        Row: {
+          id: string
+          user_id: string
+          name_ar: string
+          name_en: string
+          amount: number
+          roi_percentage: number
+          due_date: string
+          status: 'active' | 'closed'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name_ar: string
+          name_en: string
+          amount: number
+          roi_percentage: number
+          due_date: string
+          status?: 'active' | 'closed'
+          created_at?: string
+        }
+        Update: {
+          name_ar?: string
+          name_en?: string
+          amount?: number
+          roi_percentage?: number
+          due_date?: string
+          status?: 'active' | 'closed'
+        }
+        Relationships: []
+      }
+      fixed_assets: {
+        Row: {
+          id: string
+          user_id: string
+          name_ar: string
+          name_en: string
+          estimated_value: number
+          asset_type: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name_ar: string
+          name_en: string
+          estimated_value: number
+          asset_type: string
+          created_at?: string
+        }
+        Update: {
+          name_ar?: string
+          name_en?: string
+          estimated_value?: number
+          asset_type?: string
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           id: string
@@ -334,6 +394,8 @@ export type Inflow = Database['public']['Tables']['inflows']['Row']
 export type Outflow = Database['public']['Tables']['outflows']['Row']
 export type Obligation = Database['public']['Tables']['obligations']['Row']
 export type SavingsGoal = Database['public']['Tables']['savings_goals']['Row']
+export type FixedDeposit = Database['public']['Tables']['fixed_deposits']['Row']
+export type FixedAsset = Database['public']['Tables']['fixed_assets']['Row']
 export type SavingsTransaction = Database['public']['Tables']['savings_transactions']['Row']
 export type Investment = Database['public']['Tables']['investments']['Row']
 export type InvestmentWalletTransaction = Database['public']['Tables']['investment_wallet_transactions']['Row']
