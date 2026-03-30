@@ -278,29 +278,34 @@ export default function GrowthPage() {
       ) : null}
 
       {/* محفظة النمو الداخلية ولوحة الإجماليات */}
-      <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-[#E5E7EB] bg-white shadow-sm">
+      <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
         {/* الجزء العلوي: الرصيد والأزرار */}
-        <div className="flex flex-col justify-between gap-y-6 p-6 md:flex-row md:items-center md:p-8">
-          <div>
-            <div className="mb-2 flex items-center gap-x-2">
-              <Vault weight="duotone" className="h-6 w-6 text-[#2563EB]" aria-hidden />
-              <p className="text-sm font-medium text-[#6B7280]">
+        <div className="flex flex-col justify-between gap-6 p-6 md:flex-row md:items-center md:p-8">
+          <div className="flex flex-col items-start">
+            <div className="mb-2 flex items-center gap-x-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+                <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
+              </div>
+              <h2 className="text-sm font-bold text-gray-500">
                 {t('رصيد محفظة النمو', 'Growth wallet balance')}
-              </p>
+              </h2>
             </div>
-            <h2 className="text-4xl font-bold text-[#1F2937] md:text-5xl" dir="ltr">
-              {formatMoney(growthWalletBalance, locale)}{' '}
-              <span className="text-2xl font-normal text-[#6B7280]">{t('ر.س', 'SAR')}</span>
-            </h2>
+            <div className="mt-2 flex items-baseline gap-x-2">
+              <span className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl" dir="ltr">
+                {formatMoney(growthWalletBalance, locale)}
+              </span>
+              <span className="text-xl font-medium text-gray-500">{t('ر.س', 'SAR')}</span>
+            </div>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+          <div className="mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
             <button
               type="button"
               onClick={() => {
                 setWalletTxMode('withdrawal')
                 setWalletTxOpen(true)
               }}
-              className="flex flex-1 items-center justify-center gap-x-2 rounded-xl border border-[#2563EB]/20 bg-[#2563EB]/10 px-6 py-3 text-sm font-bold text-[#2563EB] transition-colors hover:bg-[#2563EB]/20 md:flex-none"
+              className="flex items-center justify-center gap-x-2 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
               <ArrowLeft className="h-4 w-4 rotate-[135deg]" aria-hidden />
               {t('استرجاع للمحفظة', 'Withdraw to Wallet')}
@@ -311,7 +316,7 @@ export default function GrowthPage() {
                 setWalletTxMode('deposit')
                 setWalletTxOpen(true)
               }}
-              className="flex flex-1 items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8] md:flex-none"
+              className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
             >
               <Plus className="h-5 w-5" aria-hidden />
               {t('إيداع من المحفظة', 'Deposit from Wallet')}
@@ -320,24 +325,39 @@ export default function GrowthPage() {
         </div>
 
         {/* الجزء السفلي: إجماليات الأقسام */}
-        <div className="grid grid-cols-1 divide-y border-t border-[#E5E7EB] bg-gray-50 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:rtl:divide-x-reverse">
-          <div className="px-6 py-4">
-            <p className="text-xs font-medium text-[#6B7280]">{t('إجمالي صناديق الادخار', 'Total Savings')}</p>
-            <p className="mt-1 text-lg font-bold text-[#1F2937]" dir="ltr">
-              {formatMoney(totalSavings, locale)}
+        <div className="grid grid-cols-1 divide-y divide-gray-200 border-t border-gray-200 bg-gray-50 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:rtl:divide-x-reverse">
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              {t('إجمالي صناديق الادخار', 'Total Savings')}
             </p>
+            <div className="mt-2 flex items-baseline gap-1">
+              <p className="text-2xl font-bold text-gray-900" dir="ltr">
+                {formatMoney(totalSavings, locale)}
+              </p>
+              <span className="text-xs font-medium text-gray-500">{t('ر.س', 'SAR')}</span>
+            </div>
           </div>
-          <div className="px-6 py-4">
-            <p className="text-xs font-medium text-[#6B7280]">{t('إجمالي الودائع والعوائد', 'Total Deposits')}</p>
-            <p className="mt-1 text-lg font-bold text-[#1F2937]" dir="ltr">
-              {formatMoney(totalDeposits, locale)}
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              {t('إجمالي الودائع والعوائد', 'Total Deposits')}
             </p>
+            <div className="mt-2 flex items-baseline gap-1">
+              <p className="text-2xl font-bold text-gray-900" dir="ltr">
+                {formatMoney(totalDeposits, locale)}
+              </p>
+              <span className="text-xs font-medium text-gray-500">{t('ر.س', 'SAR')}</span>
+            </div>
           </div>
-          <div className="px-6 py-4">
-            <p className="text-xs font-medium text-[#6B7280]">{t('إجمالي الأصول الثابتة', 'Total Fixed Assets')}</p>
-            <p className="mt-1 text-lg font-bold text-[#1F2937]" dir="ltr">
-              {formatMoney(totalAssets, locale)}
+          <div className="flex flex-col items-center justify-center p-6 text-center">
+            <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
+              {t('إجمالي الأصول الثابتة', 'Total Fixed Assets')}
             </p>
+            <div className="mt-2 flex items-baseline gap-1">
+              <p className="text-2xl font-bold text-gray-900" dir="ltr">
+                {formatMoney(totalAssets, locale)}
+              </p>
+              <span className="text-xs font-medium text-gray-500">{t('ر.س', 'SAR')}</span>
+            </div>
           </div>
         </div>
       </div>
