@@ -11,7 +11,6 @@ import {
   PiggyBank,
   Plus,
   Trash2,
-  UploadCloud,
 } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { usePeriod } from '@/contexts/PeriodContext'
@@ -19,6 +18,7 @@ import { PageHeader } from '@/components/layout/PageHeader'
 import { PeriodNavigator } from '@/components/layout/PeriodNavigator'
 import { FixedAssetModal, displayAssetType } from '@/components/growth/FixedAssetModal'
 import { FixedDepositModal } from '@/components/growth/FixedDepositModal'
+import { GrowthWalletTransactionModal } from '@/components/growth/GrowthWalletTransactionModal'
 import { SavingsGoalFormModal } from '@/components/growth/SavingsGoalFormModal'
 import { SavingsTransactionModal } from '@/components/growth/SavingsTransactionModal'
 import { getAppNavItem } from '@/config/navigation'
@@ -28,18 +28,18 @@ import { formatGregorianDate } from '@/lib/period'
 import { formatMoney } from '@/lib/format-money'
 import { deleteSavingsGoalWithOrderedTxRemoval } from '@/lib/savings-delete-goal'
 import type { FixedAsset, FixedDeposit, SavingsGoal } from '@/types/database'
-import { useAvailableCash } from '@/hooks/useAvailableCash'
 import { cn } from '@/lib/utils'
 
 const growthNav = getAppNavItem('/growth')
 
 export default function GrowthPage() {
   const { t, locale } = useLanguage()
-  const { periodKey, periodDates, startDay } = usePeriod()
+  const { periodKey, periodDates } = usePeriod()
   const [loading, setLoading] = useState(true)
   const [goals, setGoals] = useState<SavingsGoal[]>([])
   const [fixedDeposits, setFixedDeposits] = useState<FixedDeposit[]>([])
   const [fixedAssets, setFixedAssets] = useState<FixedAsset[]>([])
+  const [growthWalletBalance, setGrowthWalletBalance] = useState(0)
   const [fetchError, setFetchError] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [deletingDepositId, setDeletingDepositId] = useState<string | null>(null)
@@ -50,24 +50,20 @@ export default function GrowthPage() {
   const [txOpen, setTxOpen] = useState(false)
   const [txGoal, setTxGoal] = useState<SavingsGoal | null>(null)
   const [txMode, setTxMode] = useState<'deposit' | 'withdrawal'>('deposit')
+  const [walletTxOpen, setWalletTxOpen] = useState(false)
+  const [walletTxMode, setWalletTxMode] = useState<'deposit' | 'withdrawal'>('deposit')
 
   const [depositModalOpen, setDepositModalOpen] = useState(false)
   const [editingDeposit, setEditingDeposit] = useState<FixedDeposit | null>(null)
   const [assetModalOpen, setAssetModalOpen] = useState(false)
   const [editingAsset, setEditingAsset] = useState<FixedAsset | null>(null)
 
-  const { availableCash, loading: cashLoading, error: cashError, reload: reloadCash } = useAvailableCash({
-    periodKey,
-    periodDates,
-    startDay,
-  })
-
   const namedLabel = useCallback(
     (nameAr: string, nameEn: string) => (locale === 'ar' ? nameAr : nameEn),
     [locale]
   )
 
-  const reload = useCallback(
+  const fetchGrowthData = useCallback(
     async (isStillMounted: () => boolean = () => true) => {
       if (!isStillMounted()) return
       setLoading(true)
@@ -81,11 +77,22 @@ export default function GrowthPage() {
         setGoals([])
         setFixedDeposits([])
         setFixedAssets([])
+        setGrowthWalletBalance(0)
         setLoading(false)
         return
       }
 
       const uid = user.id
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: walletData, error: walletError } = await (supabase as any)
+        .from('growth_wallets')
+        .select('balance')
+        .single()
+
+      if (!walletError && walletData) {
+        setGrowthWalletBalance(Number(walletData.balance) || 0)
+      }
 
       const [goalsRes, depositsRes, assetsRes] = await Promise.all([
         supabase.from('savings_goals').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
@@ -108,6 +115,7 @@ export default function GrowthPage() {
       if (goalsRes.error) errs.push(goalsRes.error.message)
       if (depositsRes.error) errs.push(depositsRes.error.message)
       if (assetsRes.error) errs.push(assetsRes.error.message)
+      if (walletError && walletError.code !== 'PGRST116') errs.push(walletError.message)
       setFetchError(errs.join(' · '))
 
       setGoals(goalsRes.error ? [] : ((goalsRes.data as SavingsGoal[] | null) ?? []))
@@ -115,19 +123,21 @@ export default function GrowthPage() {
       setFixedAssets(assetsRes.error ? [] : ((assetsRes.data as FixedAsset[] | null) ?? []))
 
       setLoading(false)
-      void reloadCash()
     },
-    [reloadCash]
+    []
   )
 
   useEffect(() => {
     let isMounted = true
     const isStillMounted = () => isMounted
-    void reload(isStillMounted)
+    const loadData = async () => {
+      await fetchGrowthData(isStillMounted)
+    }
+    void loadData()
     return () => {
       isMounted = false
     }
-  }, [reload, periodKey])
+  }, [fetchGrowthData, periodKey])
 
   function openNewGoal() {
     setEditingGoal(null)
@@ -170,7 +180,7 @@ export default function GrowthPage() {
       alert(delErr.message)
       return
     }
-    void reload()
+    void fetchGrowthData()
   }
 
   function openNewDeposit() {
@@ -208,7 +218,7 @@ export default function GrowthPage() {
       alert(delErr.message)
       return
     }
-    void reload()
+    void fetchGrowthData()
   }
 
   async function handleDeleteAsset(a: FixedAsset) {
@@ -226,7 +236,7 @@ export default function GrowthPage() {
       alert(delErr.message)
       return
     }
-    void reload()
+    void fetchGrowthData()
   }
 
   if (loading) {
@@ -248,42 +258,50 @@ export default function GrowthPage() {
         actions={
           <div className="flex flex-wrap items-center justify-end gap-2">
             <PeriodNavigator />
-            <button
-              type="button"
-              onClick={openNewGoal}
-              className="rounded-full bg-[#2563EB] px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
-            >
-              {t('+ هدف جديد', '+ New goal')}
-            </button>
           </div>
         }
       />
 
-      {fetchError || cashError ? (
+      {fetchError ? (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {[fetchError, cashError].filter(Boolean).join(' · ')}
+          {fetchError}
         </div>
       ) : null}
 
-      {!cashLoading && availableCash != null ? (
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-4 shadow-sm">
-          <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
-            <span className="text-sm font-medium text-[#6B7280]">
-              {t('السيولة المتاحة في الفترة', 'Available liquidity this period')}
-            </span>
-            <button
-              type="button"
-              className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#E5E7EB] bg-white px-2 py-1 text-xs font-bold text-[#F59E0B] hover:bg-slate-50"
-            >
-              <UploadCloud className="h-4 w-4" aria-hidden />
-              {t('+ إضافة', '+ Add')}
-            </button>
+      {/* محفظة النمو الداخلية */}
+      <div className="mb-10 flex flex-col justify-between gap-y-6 rounded-3xl border border-[#E5E7EB] bg-white p-6 shadow-sm md:flex-row md:items-center md:p-8">
+        <div>
+          <div className="mb-2 flex items-center gap-x-2">
+            <DownloadCloud className="h-5 w-5 text-[#2563EB]" aria-hidden />
+            <p className="text-sm font-medium text-[#6B7280]">
+              {t('رصيد محفظة النمو', 'Growth wallet balance')}
+            </p>
           </div>
-          <span className="text-2xl font-bold tabular-nums text-[#2563EB] md:text-3xl" dir="ltr">
-            {formatMoney(availableCash, locale)} {t('ر.س', 'SAR')}
-          </span>
+          <h2 className="text-4xl font-bold text-[#1F2937] md:text-5xl" dir="ltr">
+            {formatMoney(growthWalletBalance, locale)}{' '}
+            <span className="text-2xl font-normal text-[#6B7280]">
+              {t('ر.س', 'SAR')}
+            </span>
+          </h2>
         </div>
-      ) : null}
+        
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <button 
+            onClick={() => { setWalletTxMode('withdrawal'); setWalletTxOpen(true); }}
+            className="flex flex-1 items-center justify-center gap-x-2 rounded-xl border border-[#2563EB]/20 bg-[#2563EB]/10 px-6 py-3 text-sm font-bold text-[#2563EB] transition-colors hover:bg-[#2563EB]/20 md:flex-none"
+          >
+            <ArrowLeft className="h-4 w-4 rotate-[135deg]" aria-hidden />
+            {t('استرجاع للمحفظة', 'Withdraw to Wallet')}
+          </button>
+          <button 
+            onClick={() => { setWalletTxMode('deposit'); setWalletTxOpen(true); }}
+            className="flex flex-1 items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8] md:flex-none"
+          >
+            <Plus className="h-5 w-5" aria-hidden />
+            {t('إيداع من المحفظة', 'Deposit from Wallet')}
+          </button>
+        </div>
+      </div>
 
       <div
         className={cn(
@@ -293,9 +311,21 @@ export default function GrowthPage() {
       >
         {/* صناديق الادخار */}
         <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm sm:p-6">
-          <div className="mb-6 flex items-center gap-2 border-b border-[#E5E7EB] pb-4">
-            <DownloadCloud className="h-6 w-6 shrink-0 text-[#F59E0B]" aria-hidden />
-            <h2 className="text-xl font-bold text-[#1F2937] sm:text-2xl">{t('صناديق الادخار', 'Savings funds')}</h2>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-[#E5E7EB] pb-4">
+            <div className="flex min-w-0 items-center gap-2">
+              <DownloadCloud className="h-6 w-6 shrink-0 text-[#F59E0B]" aria-hidden />
+              <h2 className="text-xl font-bold text-[#1F2937] sm:text-2xl">
+                {t('صناديق الادخار', 'Savings funds')}
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={openNewGoal}
+              className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#2563EB] px-4 py-2 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
+            >
+              <Plus className="h-4 w-4" aria-hidden />
+              {t('+ هدف جديد', '+ New goal')}
+            </button>
           </div>
 
           {goals.length === 0 ? (
@@ -599,7 +629,7 @@ export default function GrowthPage() {
           setFormOpen(false)
           setEditingGoal(null)
         }}
-        onSaved={() => void reload()}
+        onSaved={() => void fetchGrowthData()}
         edit={editingGoal}
       />
 
@@ -609,7 +639,7 @@ export default function GrowthPage() {
           setTxOpen(false)
           setTxGoal(null)
         }}
-        onSaved={() => void reload()}
+        onSaved={() => void fetchGrowthData()}
         goal={txGoal}
         mode={txMode}
         periodStart={periodDates.start}
@@ -622,7 +652,7 @@ export default function GrowthPage() {
           setDepositModalOpen(false)
           setEditingDeposit(null)
         }}
-        onSaved={() => void reload()}
+        onSaved={() => void fetchGrowthData()}
         edit={editingDeposit}
       />
 
@@ -632,8 +662,15 @@ export default function GrowthPage() {
           setAssetModalOpen(false)
           setEditingAsset(null)
         }}
-        onSaved={() => void reload()}
+        onSaved={() => void fetchGrowthData()}
         edit={editingAsset}
+      />
+
+      <GrowthWalletTransactionModal
+        open={walletTxOpen}
+        onClose={() => setWalletTxOpen(false)}
+        onSaved={() => void fetchGrowthData()}
+        mode={walletTxMode}
       />
     </div>
   )
