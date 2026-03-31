@@ -28,12 +28,13 @@ import { formatMoney } from '@/lib/format-money'
 import { deleteSavingsGoalWithOrderedTxRemoval } from '@/lib/savings-delete-goal'
 import type { FixedAsset, FixedDeposit, SavingsGoal } from '@/types/database'
 import { cn } from '@/lib/utils'
+import { useAvailableCash } from '@/hooks/useAvailableCash'
 
 const growthNav = getAppNavItem('/growth')
 
 export default function GrowthPage() {
   const { t, locale } = useLanguage()
-  const { periodKey, periodDates } = usePeriod()
+  const { periodKey, periodDates, startDay } = usePeriod()
   const [loading, setLoading] = useState(true)
   const [goals, setGoals] = useState<SavingsGoal[]>([])
   const [fixedDeposits, setFixedDeposits] = useState<FixedDeposit[]>([])
@@ -61,6 +62,7 @@ export default function GrowthPage() {
   const [isSavingsOpen, setIsSavingsOpen] = useState(true)
   const [isDepositsOpen, setIsDepositsOpen] = useState(true)
   const [isAssetsOpen, setIsAssetsOpen] = useState(true)
+  const { availableCash, loading: cashLoading } = useAvailableCash({ periodKey, periodDates, startDay })
 
   // حساب الإجماليات للأقسام الثلاثة
   const totalSavings = goals.reduce((acc, g) => acc + Number(g.current_amount || 0), 0)
@@ -270,6 +272,15 @@ export default function GrowthPage() {
               {fetchError}
             </div>
           ) : null}
+
+      {!loading && !cashLoading && availableCash != null ? (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#1B6EF3] bg-[#1B6EF3] px-4 py-3 shadow-sm">
+          <span className="text-sm text-white">{t('السيولة المتاحة في الفترة', 'Available liquidity this period')}</span>
+          <span className="text-lg font-bold text-white tabular-nums" dir="ltr">
+            {formatMoney(availableCash, locale)}
+          </span>
+        </div>
+      ) : null}
 
       {/* محفظة النمو الداخلية ولوحة الإجماليات */}
       <div className="flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">

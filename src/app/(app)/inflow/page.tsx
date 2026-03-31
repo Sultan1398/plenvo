@@ -15,6 +15,7 @@ import { InflowFormModal } from '@/components/inflow/InflowFormModal'
 import { Pencil, Trash2, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRolloverBalance } from '@/hooks/useRolloverBalance'
+import { useAvailableCash } from '@/hooks/useAvailableCash'
 
 const inflowNav = getAppNavItem('/inflow')
 
@@ -37,6 +38,7 @@ export default function InflowPage() {
     periodDates,
     startDay,
   })
+  const { availableCash, loading: cashLoading } = useAvailableCash({ periodKey, periodDates, startDay })
 
   const loadInflows = useCallback(async (isStillMounted: () => boolean = () => true) => {
     if (!isStillMounted()) return
@@ -171,6 +173,15 @@ export default function InflowPage() {
       {fetchError || rolloverError ? (
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-danger">
           {[fetchError, rolloverError].filter(Boolean).join(' · ')}
+        </div>
+      ) : null}
+
+      {!loading && !cashLoading && availableCash != null ? (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#1B6EF3] bg-[#1B6EF3] px-4 py-3 shadow-sm">
+          <span className="text-sm text-white">{t('السيولة المتاحة في الفترة', 'Available liquidity this period')}</span>
+          <span className="text-lg font-bold text-white tabular-nums" dir="ltr">
+            {formatMoney(availableCash, locale)}
+          </span>
         </div>
       ) : null}
 

@@ -19,12 +19,13 @@ import { InvestmentActivityLogModal } from '@/components/investments/InvestmentA
 import { Pencil, ArrowDownLeft, ArrowUpRight, Trash2, Loader2, Power, ScrollText } from 'lucide-react'
 import { Wallet, ChartLineUp, CheckCircle, CaretUp, CaretDown } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import { useAvailableCash } from '@/hooks/useAvailableCash'
 
 const investmentsNav = getAppNavItem('/investments')
 
 export default function InvestmentsPage() {
   const { t, locale, isRTL } = useLanguage()
-  const { periodDates } = usePeriod()
+  const { periodKey, periodDates, startDay } = usePeriod()
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -36,6 +37,7 @@ export default function InvestmentsPage() {
   const [walletWithdrawalsTotal, setWalletWithdrawalsTotal] = useState(0)
   const [isOpenDealsOpen, setIsOpenDealsOpen] = useState(true)
   const [isClosedDealsOpen, setIsClosedDealsOpen] = useState(true)
+  const { availableCash, loading: cashLoading } = useAvailableCash({ periodKey, periodDates, startDay })
 
   const reload = useCallback(async () => {
     setLoading(true)
@@ -267,6 +269,15 @@ export default function InvestmentsPage() {
         </div>
       ) : (
         <>
+          {!cashLoading && availableCash != null ? (
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-[#1B6EF3] bg-[#1B6EF3] px-4 py-3 shadow-sm">
+              <span className="text-sm text-white">{t('السيولة المتاحة في الفترة', 'Available liquidity this period')}</span>
+              <span className="text-lg font-bold text-white tabular-nums" dir="ltr">
+                {formatMoney(availableCash, locale)}
+              </span>
+            </div>
+          ) : null}
+
           {/* محفظة الاستثمارات ولوحة الإجماليات */}
           <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
             {/* الجزء العلوي: الرصيد والأزرار */}
