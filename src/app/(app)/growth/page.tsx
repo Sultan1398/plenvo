@@ -278,12 +278,13 @@ export default function GrowthPage() {
       ) : null}
 
       {/* محفظة النمو الداخلية ولوحة الإجماليات */}
-      <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+      <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
         {/* الجزء العلوي: الرصيد والأزرار */}
-        <div className="flex flex-col justify-between gap-6 p-6 md:flex-row md:items-center md:p-8">
-          <div className="flex flex-col items-start">
+        <div className="relative flex flex-col justify-between gap-6 bg-gradient-to-b from-blue-50/40 to-white p-6 md:flex-row md:items-center md:p-8">
+          <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
+          <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
                 <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
@@ -298,7 +299,7 @@ export default function GrowthPage() {
             </div>
           </div>
 
-          <div className="mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
+          <div className="relative mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
             <button
               type="button"
               onClick={() => {
@@ -326,24 +327,19 @@ export default function GrowthPage() {
 
         {/* الجزء السفلي: إجماليات الأقسام */}
         <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
-          {/* إجمالي صناديق الادخار */}
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-6 text-center sm:border-b-0">
             <p className="text-sm font-medium text-gray-500">{t('إجمالي صناديق الادخار', 'Total Savings')}</p>
             <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
               {formatMoney(totalSavings, locale)}
             </p>
           </div>
-
-          {/* إجمالي الودائع والعوائد (بدون خط فاصل عمودي مع الادخار) */}
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-6 text-center sm:border-b-0">
             <p className="text-sm font-medium text-gray-500">{t('إجمالي الودائع والعوائد', 'Total Deposits')}</p>
             <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
               {formatMoney(totalDeposits, locale)}
             </p>
           </div>
-
-          {/* إجمالي الأصول الثابتة (مفصول بخط ناعم) */}
-          <div className="flex flex-col items-center justify-center p-6 text-center sm:border-s border-gray-200">
+          <div className="flex flex-col items-center justify-center p-6 text-center">
             <p className="text-sm font-medium text-gray-500">{t('إجمالي الأصول الثابتة', 'Total Fixed Assets')}</p>
             <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
               {formatMoney(totalAssets, locale)}
