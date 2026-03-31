@@ -54,7 +54,7 @@ function SidebarContent({
         ) : null}
       </div>
 
-      <nav className="flex-1 space-y-0.5 p-2.5">
+      <nav className="space-y-0.5 p-2.5">
         {appNavItems.map((item) => {
           const isActive = pathname === item.href
           const Icon = item.icon
