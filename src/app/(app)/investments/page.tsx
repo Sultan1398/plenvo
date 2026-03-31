@@ -131,7 +131,7 @@ export default function InvestmentsPage() {
     return sum
   }, [closedDeals, minD, maxD])
   const totalProfit = profitLossInPeriod
-  const investmentWalletBalance = walletDepositsTotal - walletWithdrawalsTotal + totalProfit
+  const investmentWalletBalance = portfolioValue + liquidityCash
 
   function investmentPathMeta(type: Investment['type']) {
     /** يطابق DEAL_CATEGORIES في InvestmentDealModal: فوركس→other، عقار→partnership، مشاريع→freelance */
