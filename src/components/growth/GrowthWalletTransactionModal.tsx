@@ -87,7 +87,7 @@ export function GrowthWalletTransactionModal({ open, onClose, onSaved, mode }: G
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-[#374151]">
-              {t('المبلغ (ر.س)', 'Amount (SAR)')}
+              {t('المبلغ', 'Amount')}
             </label>
             <input
               type="number"

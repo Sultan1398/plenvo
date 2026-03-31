@@ -280,7 +280,7 @@ export default function GrowthPage() {
       {/* محفظة النمو الداخلية ولوحة الإجماليات */}
       <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
         {/* الجزء العلوي: الرصيد والأزرار */}
-        <div className="relative flex flex-col justify-between gap-6 bg-gradient-to-b from-blue-50/40 to-white p-6 md:flex-row md:items-center md:p-8">
+        <div className="relative flex flex-col justify-between gap-4 bg-gradient-to-b from-blue-50/40 to-white p-5 md:flex-row md:items-center md:p-6">
           <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
           <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
@@ -295,11 +295,10 @@ export default function GrowthPage() {
               <span className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-5xl" dir="ltr">
                 {formatMoney(growthWalletBalance, locale)}
               </span>
-              <span className="text-xl font-medium text-gray-500">{t('ر.س', 'SAR')}</span>
             </div>
           </div>
 
-          <div className="relative mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
+          <div className="relative mt-2 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center md:mt-0">
             <button
               type="button"
               onClick={() => {
@@ -309,7 +308,7 @@ export default function GrowthPage() {
               className="flex items-center justify-center gap-x-2 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
               <ArrowLeft className="h-4 w-4 rotate-[135deg]" aria-hidden />
-              {t('استرجاع للمحفظة', 'Withdraw to Wallet')}
+              {t('سحب', 'Withdraw')}
             </button>
             <button
               type="button"
@@ -320,7 +319,7 @@ export default function GrowthPage() {
               className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
             >
               <Plus className="h-5 w-5" aria-hidden />
-              {t('إيداع من المحفظة', 'Deposit from Wallet')}
+              {t('إيداع', 'Deposit')}
             </button>
           </div>
         </div>
@@ -328,20 +327,20 @@ export default function GrowthPage() {
         {/* الجزء السفلي: إجماليات الأقسام */}
         <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-6 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">{t('إجمالي صناديق الادخار', 'Total Savings')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-emerald-600">{t('إجمالي صناديق الادخار', 'Total Savings')}</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-700" dir="ltr">
               {formatMoney(totalSavings, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-6 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">{t('إجمالي الودائع والعوائد', 'Total Deposits')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-emerald-600">{t('إجمالي الودائع والعوائد', 'Total Deposits')}</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-700" dir="ltr">
               {formatMoney(totalDeposits, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center p-6 text-center">
-            <p className="text-sm font-medium text-gray-500">{t('إجمالي الأصول الثابتة', 'Total Fixed Assets')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-emerald-600">{t('إجمالي الأصول الثابتة', 'Total Fixed Assets')}</p>
+            <p className="mt-2 text-2xl font-bold text-emerald-700" dir="ltr">
               {formatMoney(totalAssets, locale)}
             </p>
           </div>
@@ -598,7 +597,7 @@ export default function GrowthPage() {
                       <p dir="ltr">
                         {t('المبلغ:', 'Amount:')}{' '}
                         <span className="font-medium text-[#1F2937]">
-                          {formatMoney(Number(deposit.amount), locale)} {t('ر.س', 'SAR')}
+                          {formatMoney(Number(deposit.amount), locale)}
                         </span>
                       </p>
                       <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#10B981]/10 px-2.5 py-1 text-xs font-bold text-[#059669]">
@@ -726,7 +725,7 @@ export default function GrowthPage() {
                       className="shrink-0 self-start rounded-lg bg-[#E5E7EB] px-3 py-1.5 text-sm font-bold text-[#1F2937] tabular-nums sm:self-center"
                       dir="ltr"
                     >
-                      {formatMoney(Number(asset.estimated_value), locale)} {t('ر.س', 'SAR')}
+                      {formatMoney(Number(asset.estimated_value), locale)}
                     </div>
                   </div>
                   ))}
