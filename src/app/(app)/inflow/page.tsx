@@ -151,13 +151,14 @@ export default function InflowPage() {
       ) : null}
 
       {/* بطاقة إجمالي الدخل والتفاصيل */}
-      <div className="mb-8 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+      <div className="mb-8 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
         {/* الجزء العلوي: إجمالي الدخل والأزرار */}
-        <div className="flex flex-col justify-between gap-4 p-5 md:flex-row md:items-center">
-          <div className="flex flex-col items-start">
+        <div className="relative flex flex-col justify-between gap-4 bg-gradient-to-b from-blue-50/40 to-white p-5 md:flex-row md:items-center">
+          <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
+          <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50">
-                <TrendUp weight="duotone" className="h-5 w-5 text-emerald-600" aria-hidden />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
+                <TrendUp weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
                 {t('إجمالي الدخل للفترة الحالية', 'Total Income for Current Period')}
@@ -170,7 +171,7 @@ export default function InflowPage() {
             </div>
           </div>
 
-          <div className="mt-4 flex w-full flex-col sm:w-auto md:mt-0">
+          <div className="relative mt-2 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center md:mt-0">
             <button
               type="button"
               onClick={openAdd}

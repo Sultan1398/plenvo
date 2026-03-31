@@ -220,11 +220,12 @@ export default function OutflowPage() {
       ) : null}
 
       {/* بطاقة إجمالي المصروفات في الفترة */}
-      <div className="mb-8 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-        <div className="flex flex-col justify-between gap-4 p-5 md:flex-row md:items-center">
-          <div className="flex flex-col items-start">
+      <div className="mb-8 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
+        <div className="relative flex flex-col justify-between gap-4 bg-gradient-to-b from-blue-50/40 to-white p-5 md:flex-row md:items-center">
+          <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
+          <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
                 <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
@@ -238,7 +239,7 @@ export default function OutflowPage() {
             </div>
           </div>
 
-          <div className="mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
+          <div className="relative mt-2 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center md:mt-0">
             <button
               type="button"
               onClick={openAddObligation}

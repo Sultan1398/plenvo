@@ -279,13 +279,14 @@ export default function InvestmentsPage() {
           ) : null}
 
           {/* محفظة الاستثمارات ولوحة الإجماليات */}
-          <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
+          <div className="mb-10 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
             {/* الجزء العلوي: الرصيد والأزرار */}
-            <div className="flex flex-col justify-between gap-4 p-5 md:flex-row md:items-center">
-              <div className="flex flex-col items-start">
+            <div className="relative flex flex-col justify-between gap-4 bg-gradient-to-b from-blue-50/40 to-white p-5 md:flex-row md:items-center">
+              <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
+              <div className="relative flex flex-col items-start">
                 <div className="mb-2 flex items-center gap-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50">
-                    <Wallet weight="duotone" className="h-5 w-5 text-indigo-600" aria-hidden />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
+                    <Wallet weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
                   </div>
                   <h2 className="text-sm font-bold text-gray-500">
                     {t('رصيد محفظة الاستثمار', 'Investment Wallet Balance')}
@@ -298,7 +299,7 @@ export default function InvestmentsPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-0">
+              <div className="relative mt-2 flex w-full flex-col gap-2.5 sm:w-auto sm:flex-row sm:items-center md:mt-0">
                 <button
                   type="button"
                   onClick={() => {
@@ -316,7 +317,7 @@ export default function InvestmentsPage() {
                     setTransferMode('deposit')
                     setTransferOpen(true)
                   }}
-                  className="flex items-center justify-center gap-x-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-indigo-700"
+                  className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
                 >
                   <ArrowDownLeft className="h-5 w-5" aria-hidden />
                   {t('إيداع', 'Deposit')}
