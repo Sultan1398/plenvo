@@ -252,7 +252,7 @@ export default function InvestmentsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl p-4 lg:p-6">
+    <div className="mx-auto max-w-6xl p-4 lg:p-6">
       <PageHeader
         nav={investmentsNav}
         subtitle={t('إدارة الاستثمارات وفتح/إغلاق الصفقات', 'Manage investments and open/close deals')}

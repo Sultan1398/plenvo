@@ -197,7 +197,7 @@ export default function OutflowPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-4 lg:p-6">
+    <div className="mx-auto max-w-6xl p-4 lg:p-6">
       <PageHeader
         nav={outflowNav}
         subtitle={t('المصروفات العامة والتزامات مالية', 'General expenses and financial obligations')}
@@ -259,24 +259,25 @@ export default function OutflowPage() {
           </div>
         </div>
 
+        {/* القسم السفلي: ألوان مطابقة لأيقونة قسم المصروف (Vault) */}
         <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">{t('إجمالي المصروفات العامة', 'Total General Expenses')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-[#2563EB]">{t('إجمالي المصروفات العامة', 'Total General Expenses')}</p>
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(totalGeneralExpenses, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-[#2563EB]">
               {t('إجمالي الالتزامات المالية', 'Total Financial Obligations')}
             </p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(totalObligations, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 text-center sm:border-s border-gray-200">
-            <p className="text-sm font-medium text-gray-500">{t('الالتزامات المسددة', 'Paid Obligations')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-[#2563EB]">{t('الالتزامات المسددة', 'Paid Obligations')}</p>
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(totalPaidObligations, locale)}
             </p>
           </div>

@@ -122,7 +122,7 @@ export default function InflowPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-4 lg:p-6">
+    <div className="mx-auto max-w-6xl p-4 lg:p-6">
       <PageHeader
         nav={inflowNav}
         subtitle={t('مصادر الدخل للفترة الحالية', 'Income sources for current period')}
@@ -183,25 +183,25 @@ export default function InflowPage() {
           </div>
         </div>
 
-        {/* الجزء السفلي: تفاصيل الدخل */}
+        {/* الجزء السفلي: تفاصيل الدخل (ألوان مطابقة لأيقونة قسم الدخل) */}
         <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">
+            <p className="text-sm font-medium text-[#2563EB]">
               {t('الرصيد المرحل من السابق', 'Carried Over Balance')}
             </p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(rolledOverBalance, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-gray-500">{t('دخل ثابت', 'Fixed Income')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-[#2563EB]">{t('دخل ثابت', 'Fixed Income')}</p>
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(totals.fixed, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center p-4 text-center sm:border-s border-gray-200">
-            <p className="text-sm font-medium text-gray-500">{t('دخل متغير', 'Variable Income')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1F2937]" dir="ltr">
+            <p className="text-sm font-medium text-[#2563EB]">{t('دخل متغير', 'Variable Income')}</p>
+            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
               {formatMoney(totals.variable, locale)}
             </p>
           </div>

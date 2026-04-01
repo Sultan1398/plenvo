@@ -398,11 +398,8 @@ function HubPageInner() {
     return t('نظرة عامة على الفترة المالية', 'Financial period overview')
   }, [activeTab, t])
 
-  const shellMax =
-    activeTab === 'year' ? 'max-w-[90rem]' : activeTab === 'analytics' ? 'max-w-6xl' : 'max-w-5xl'
-
   return (
-    <div className={cn('mx-auto p-4 lg:p-6', shellMax)}>
+    <div className="mx-auto max-w-6xl p-4 lg:p-6">
       <PageHeader nav={hubNav} subtitle={pageSubtitle} actions={<PeriodNavigator />} />
 
       <div
@@ -661,7 +658,7 @@ export default function HubPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-5xl p-4 lg:p-6">
+        <div className="mx-auto max-w-6xl p-4 lg:p-6">
           <div className="rounded-xl border border-border bg-white p-12 text-center text-muted">
             {t('جارٍ التحميل…', 'Loading…')}
           </div>
