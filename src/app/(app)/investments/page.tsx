@@ -16,8 +16,17 @@ import { InvestmentWalletTransferModal } from '@/components/investments/Investme
 import { InvestmentDealModal } from '@/components/investments/InvestmentDealModal'
 import { InvestmentCloseModal } from '@/components/investments/InvestmentCloseModal'
 import { InvestmentActivityLogModal } from '@/components/investments/InvestmentActivityLogModal'
-import { Pencil, ArrowDownLeft, ArrowUpRight, Trash2, Loader2, Power, ScrollText } from 'lucide-react'
-import { Wallet, ChartLineUp, CheckCircle, CaretUp, CaretDown } from '@phosphor-icons/react'
+import {
+  Pencil,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Trash2,
+  Loader2,
+  Power,
+  ScrollText,
+  LineChart,
+} from 'lucide-react'
+import { ChartLineUp, CheckCircle, CaretUp, CaretDown } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
 
@@ -285,8 +294,8 @@ export default function InvestmentsPage() {
               <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
               <div className="relative flex flex-col items-start">
                 <div className="mb-2 flex items-center gap-x-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
-                    <Wallet weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-50 ring-1 ring-violet-100">
+                    <LineChart className="h-5 w-5 text-violet-700" aria-hidden />
                   </div>
                   <h2 className="text-sm font-bold text-gray-500">
                     {t('رصيد محفظة الاستثمار', 'Investment Wallet Balance')}
@@ -325,25 +334,31 @@ export default function InvestmentsPage() {
               </div>
             </div>
 
-            {/* الجزء السفلي: إجماليات الاستثمارات */}
+            {/* الجزء السفلي: إجماليات الاستثمارات — ألوان بنفسجية كقسم الاستثمار، بدون فواصل عمودية */}
             <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
               <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-                <p className="text-sm font-medium text-indigo-600">{t('قيمة المحفظة الاستثمارية', 'Portfolio Value')}</p>
-                <p className="mt-2 text-2xl font-bold text-indigo-700" dir="ltr">
+                <p className="text-sm font-medium text-violet-600">{t('قيمة المحفظة الاستثمارية', 'Portfolio Value')}</p>
+                <p className="mt-2 text-2xl font-bold text-violet-700" dir="ltr">
                   {formatMoney(portfolioValue, locale)}
                 </p>
               </div>
 
-              <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0 sm:border-s border-gray-200">
-                <p className="text-sm font-medium text-indigo-600">{t('السيولة النقدية', 'Cash Liquidity')}</p>
-                <p className="mt-2 text-2xl font-bold text-indigo-700" dir="ltr">
+              <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
+                <p className="text-sm font-medium text-violet-600">{t('السيولة النقدية', 'Cash Liquidity')}</p>
+                <p className="mt-2 text-2xl font-bold text-violet-700" dir="ltr">
                   {formatMoney(liquidityCash, locale)}
                 </p>
               </div>
 
-              <div className="flex flex-col items-center justify-center p-4 text-center sm:border-s border-gray-200">
-                <p className="text-sm font-medium text-indigo-600">{t('الربح/الخسارة', 'Profit/Loss')}</p>
-                <p className={cn('mt-2 text-2xl font-bold', totalProfit >= 0 ? 'text-green-600' : 'text-red-600')} dir="ltr">
+              <div className="flex flex-col items-center justify-center p-4 text-center">
+                <p className="text-sm font-medium text-violet-600">{t('الربح/الخسارة', 'Profit/Loss')}</p>
+                <p
+                  className={cn(
+                    'mt-2 text-2xl font-bold',
+                    totalProfit >= 0 ? 'text-violet-700' : 'text-red-600'
+                  )}
+                  dir="ltr"
+                >
                   {totalProfit > 0 ? '+' : ''}
                   {formatMoney(totalProfit, locale)}
                 </p>

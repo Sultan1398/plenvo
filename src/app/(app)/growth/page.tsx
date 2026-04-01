@@ -8,9 +8,10 @@ import {
   Loader2,
   Pencil,
   Plus,
+  Sprout,
   Trash2,
 } from 'lucide-react'
-import { Vault, Money as MoneyBag, Bank, Buildings, CaretUp, CaretDown } from '@phosphor-icons/react'
+import { Money as MoneyBag, Bank, Buildings, CaretUp, CaretDown } from '@phosphor-icons/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { usePeriod } from '@/contexts/PeriodContext'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -382,8 +383,8 @@ export default function GrowthPage() {
           <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
           <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
-                <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 ring-1 ring-teal-100">
+                <Sprout className="h-5 w-5 text-teal-700" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
                 {t('رصيد محفظة النمو', 'Growth wallet balance')}
