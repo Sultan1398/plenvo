@@ -29,8 +29,9 @@ import {
   ReceiptText,
   CheckCircle,
   AlertCircle,
+  TrendingDown,
 } from 'lucide-react'
-import { Vault, Plus, CaretUp, CaretDown, Receipt, CalendarCheck } from '@phosphor-icons/react'
+import { Plus, CaretUp, CaretDown, Receipt, CalendarCheck } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 const outflowNav = getAppNavItem('/outflow')
@@ -219,17 +220,17 @@ export default function OutflowPage() {
         </div>
       ) : null}
 
-      {/* بطاقة إجمالي المصروفات في الفترة */}
+      {/* بطاقة إجمالي المصروفات للفترة الحالية */}
       <div className="mb-8 flex flex-col overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm ring-1 ring-black/[0.02]">
         <div className="relative flex flex-col justify-between gap-4 bg-gradient-to-b from-blue-50/40 to-white p-5 md:flex-row md:items-center">
           <div className="pointer-events-none absolute -top-10 -end-10 h-28 w-28 rounded-full bg-blue-100/50 blur-2xl" />
           <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 ring-1 ring-blue-100">
-                <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-50 ring-1 ring-rose-100">
+                <TrendingDown className="h-5 w-5 text-rose-700" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
-                {t('إجمالي المصروفات في الفترة', 'Total Expenses in Period')}
+                {t('إجمالي المصروفات للفترة الحالية', 'Total Expenses for Current Period')}
               </h2>
             </div>
             <div className="mt-2 flex items-baseline gap-x-2">
@@ -259,25 +260,25 @@ export default function OutflowPage() {
           </div>
         </div>
 
-        {/* القسم السفلي: ألوان مطابقة لأيقونة قسم المصروف (Vault) */}
+        {/* القسم السفلي: نصوص بلون وردي يتوافق مع تمييز قسم المصروف في التنقل (TrendingDown / rose) */}
         <div className="grid grid-cols-1 border-t border-gray-100 bg-white sm:grid-cols-3">
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-[#2563EB]">{t('إجمالي المصروفات العامة', 'Total General Expenses')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
+            <p className="text-sm font-medium text-rose-700">{t('إجمالي المصروفات العامة', 'Total General Expenses')}</p>
+            <p className="mt-2 text-2xl font-bold text-rose-700" dir="ltr">
               {formatMoney(totalGeneralExpenses, locale)}
             </p>
           </div>
           <div className="flex flex-col items-center justify-center border-b border-gray-100 p-4 text-center sm:border-b-0">
-            <p className="text-sm font-medium text-[#2563EB]">
+            <p className="text-sm font-medium text-rose-700">
               {t('إجمالي الالتزامات المالية', 'Total Financial Obligations')}
             </p>
-            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
+            <p className="mt-2 text-2xl font-bold text-rose-700" dir="ltr">
               {formatMoney(totalObligations, locale)}
             </p>
           </div>
-          <div className="flex flex-col items-center justify-center p-4 text-center sm:border-s border-gray-200">
-            <p className="text-sm font-medium text-[#2563EB]">{t('الالتزامات المسددة', 'Paid Obligations')}</p>
-            <p className="mt-2 text-2xl font-bold text-[#1D4ED8]" dir="ltr">
+          <div className="flex flex-col items-center justify-center p-4 text-center">
+            <p className="text-sm font-medium text-rose-700">{t('الالتزامات المسددة', 'Paid Obligations')}</p>
+            <p className="mt-2 text-2xl font-bold text-rose-700" dir="ltr">
               {formatMoney(totalPaidObligations, locale)}
             </p>
           </div>
