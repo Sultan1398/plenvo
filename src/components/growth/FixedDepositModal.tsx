@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
-import type { FixedDeposit } from '@/types/database'
+import type { Database, FixedDeposit } from '@/types/database'
 import { dateToLocalISODate } from '@/lib/date-local'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -30,15 +30,15 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
   useEffect(() => {
     if (!open) return
     setError('')
-    const row = edit as any
+    const row = edit as FixedDeposit | null
     if (edit) {
-      setSecurityType((row.security_type as 'bank_deposit' | 'bonds' | 'sukuk') ?? 'bank_deposit')
-      setName((row.name as string) ?? row.name_ar ?? row.name_en ?? '')
+      setSecurityType((row?.security_type as 'bank_deposit' | 'bonds' | 'sukuk') ?? 'bank_deposit')
+      setName(row?.name ?? row?.name_ar ?? row?.name_en ?? '')
       setAmount(String(edit.amount))
-      setDurationMonths(String((row.duration_months as number) ?? ''))
-      setInterestRate(String((row.interest_rate as number) ?? row.roi_percentage ?? ''))
-      setReturnType((row.return_type as 'fixed' | 'variable') ?? 'fixed')
-      setStartDate((row.start_date as string | undefined)?.slice(0, 10) ?? dateToLocalISODate(new Date()))
+      setDurationMonths(String(row?.duration_months ?? ''))
+      setInterestRate(String(row?.interest_rate ?? row?.roi_percentage ?? ''))
+      setReturnType((row?.return_type as 'fixed' | 'variable') ?? 'fixed')
+      setStartDate(row?.start_date?.slice(0, 10) ?? dateToLocalISODate(new Date()))
     } else {
       setSecurityType('bank_deposit')
       setName('')
@@ -91,11 +91,10 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
         setError(t('يجب تسجيل الدخول', 'You must be signed in'))
         return
       }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: walletData, error: walletError } = await (supabase as any).from('growth_wallets').select('balance').single()
+      const { data: walletData, error: walletError } = await supabase.from('growth_wallets').select('balance').single()
       const walletBalance = !walletError && walletData ? Number(walletData.balance) || 0 : 0
 
-      const row: any = {
+      const row: Partial<Database['public']['Tables']['fixed_deposits']['Insert']> = {
         security_type: securityType,
         name: trimmedName,
         amount: num,
@@ -115,39 +114,36 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
         }
         if (delta > 0) {
           // withdraw extra from wallet before applying update
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+          const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
             user_id: user.id,
             amount: delta,
             transaction_type: 'withdrawal',
-          } as any)
+          })
           if (walletTxErr) {
             setError(walletTxErr.message)
             return
           }
         }
-        const { error: up } = await (supabase as any).from('fixed_deposits').update(row as any).eq('id', edit.id)
+        const { error: up } = await supabase.from('fixed_deposits').update(row).eq('id', edit.id)
         if (up) {
           if (num > previousAmount) {
             // compensate wallet on failed update
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            await (supabase as any).from('growth_wallet_transactions').insert({
+            await supabase.from('growth_wallet_transactions').insert({
               user_id: user.id,
               amount: num - previousAmount,
               transaction_type: 'deposit',
-            } as any)
+            })
           }
           setError(up.message)
           return
         }
         if (delta < 0) {
           // return released amount to wallet after successful update
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+          const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
             user_id: user.id,
             amount: Math.abs(delta),
             transaction_type: 'deposit',
-          } as any)
+          })
           if (walletTxErr) {
             setError(walletTxErr.message)
             return
@@ -159,28 +155,26 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
           return
         }
         // withdraw from wallet first
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+        const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
           user_id: user.id,
           amount: num,
           transaction_type: 'withdrawal',
-        } as any)
+        })
         if (walletTxErr) {
           setError(walletTxErr.message)
           return
         }
-        const { error: ins } = await (supabase as any).from('fixed_deposits').insert({
+        const { error: ins } = await supabase.from('fixed_deposits').insert({
           ...row,
           user_id: user.id,
-        } as any)
+        } as Database['public']['Tables']['fixed_deposits']['Insert'])
         if (ins) {
           // compensate wallet if insert fails
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase as any).from('growth_wallet_transactions').insert({
+          await supabase.from('growth_wallet_transactions').insert({
             user_id: user.id,
             amount: num,
             transaction_type: 'deposit',
-          } as any)
+          })
           setError(ins.message)
           return
         }

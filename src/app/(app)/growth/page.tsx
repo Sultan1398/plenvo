@@ -113,11 +113,7 @@ export default function GrowthPage() {
 
       const uid = user.id
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: walletData, error: walletError } = await (supabase as any)
-        .from('growth_wallets')
-        .select('balance')
-        .single()
+      const { data: walletData, error: walletError } = await supabase.from('growth_wallets').select('balance').single()
 
       if (!walletError && walletData) {
         setGrowthWalletBalance(Number(walletData.balance) || 0)
@@ -125,8 +121,7 @@ export default function GrowthPage() {
 
       const [goalsRes, depositsRes, assetsRes] = await Promise.all([
         supabase.from('savings_goals').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase as any)
+        supabase
           .from('fixed_deposits')
           .select(
             'id, name, security_type, amount, duration_months, interest_rate, return_type, start_date, status, closing_amount, closing_date, created_at, name_ar, name_en, roi_percentage, due_date'
@@ -150,7 +145,7 @@ export default function GrowthPage() {
       setFetchError(errs.join(' · '))
 
       setGoals(goalsRes.error ? [] : ((goalsRes.data as SavingsGoal[] | null) ?? []))
-      setFixedDeposits(depositsRes.error ? [] : ((depositsRes.data as unknown as FixedDeposit[] | null) ?? []))
+      setFixedDeposits(depositsRes.error ? [] : ((depositsRes.data as FixedDeposit[] | null) ?? []))
       setFixedAssets(assetsRes.error ? [] : ((assetsRes.data as FixedAsset[] | null) ?? []))
       setLoading(false)
     },
@@ -215,8 +210,7 @@ export default function GrowthPage() {
         return
       }
       // return goal balance to growth wallet before closing/deleting it
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+      const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
         user_id: user.id,
         amount: bal,
         transaction_type: 'deposit',
@@ -236,8 +230,7 @@ export default function GrowthPage() {
         } = await supabase.auth.getUser()
         if (user) {
           // compensate wallet if deletion failed
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase as any).from('growth_wallet_transactions').insert({
+          await supabase.from('growth_wallet_transactions').insert({
             user_id: user.id,
             amount: bal,
             transaction_type: 'withdrawal',
@@ -294,8 +287,7 @@ export default function GrowthPage() {
       return
     }
     // return deposit amount to growth wallet on close/delete
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+    const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
       user_id: user.id,
       amount,
       transaction_type: 'deposit',
@@ -309,8 +301,7 @@ export default function GrowthPage() {
     setDeletingDepositId(null)
     if (delErr) {
       // compensate wallet if deletion fails
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('growth_wallet_transactions').insert({
+      await supabase.from('growth_wallet_transactions').insert({
         user_id: user.id,
         amount,
         transaction_type: 'withdrawal',
@@ -340,8 +331,7 @@ export default function GrowthPage() {
       return
     }
     // return asset value to growth wallet on close/delete
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: walletTxErr } = await (supabase as any).from('growth_wallet_transactions').insert({
+    const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
       user_id: user.id,
       amount,
       transaction_type: 'deposit',
@@ -355,8 +345,7 @@ export default function GrowthPage() {
     setDeletingAssetId(null)
     if (delErr) {
       // compensate wallet if deletion fails
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase as any).from('growth_wallet_transactions').insert({
+      await supabase.from('growth_wallet_transactions').insert({
         user_id: user.id,
         amount,
         transaction_type: 'withdrawal',

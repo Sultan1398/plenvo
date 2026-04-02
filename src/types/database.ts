@@ -212,6 +212,48 @@ export interface Database {
         }
         Relationships: []
       }
+      growth_wallets: {
+        Row: {
+          id: string
+          user_id: string
+          balance: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          balance?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      growth_wallet_transactions: {
+        Row: {
+          id: string
+          user_id: string
+          amount: number
+          transaction_type: 'deposit' | 'withdrawal'
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          amount: number
+          transaction_type: 'deposit' | 'withdrawal'
+          created_at?: string
+        }
+        Update: {
+          amount?: number
+          transaction_type?: 'deposit' | 'withdrawal'
+        }
+        Relationships: []
+      }
       investment_wallet_transactions: {
         Row: {
           id: string
@@ -282,35 +324,63 @@ export interface Database {
         Row: {
           id: string
           user_id: string
+          /** الاسم الموحد للورقة المالية */
+          name: string
+          /** نوع الورقة: وديعة/سندات/صكوك */
+          security_type: 'bank_deposit' | 'bonds' | 'sukuk'
           name_ar: string
           name_en: string
           amount: number
+          /** مدة الورقة بالأشهر */
+          duration_months: number
+          /** نسبة العائد */
+          interest_rate: number
+          /** نوع العائد */
+          return_type: 'fixed' | 'variable'
           roi_percentage: number
           start_date: string
           due_date: string
           status: 'active' | 'closed'
+          /** قيمة الإغلاق عند إغلاق الورقة */
+          closing_amount: number | null
+          /** تاريخ الإغلاق */
+          closing_date: string | null
           created_at: string
         }
         Insert: {
           id?: string
           user_id: string
+          name?: string
+          security_type?: 'bank_deposit' | 'bonds' | 'sukuk'
           name_ar: string
           name_en: string
           amount: number
+          duration_months?: number
+          interest_rate?: number
+          return_type?: 'fixed' | 'variable'
           roi_percentage: number
           start_date: string
           due_date: string
           status?: 'active' | 'closed'
+          closing_amount?: number | null
+          closing_date?: string | null
           created_at?: string
         }
         Update: {
+          name?: string
+          security_type?: 'bank_deposit' | 'bonds' | 'sukuk'
           name_ar?: string
           name_en?: string
           amount?: number
+          duration_months?: number
+          interest_rate?: number
+          return_type?: 'fixed' | 'variable'
           roi_percentage?: number
           start_date?: string
           due_date?: string
           status?: 'active' | 'closed'
+          closing_amount?: number | null
+          closing_date?: string | null
         }
         Relationships: []
       }
