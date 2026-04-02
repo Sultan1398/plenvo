@@ -17,6 +17,7 @@ import { usePeriod } from '@/contexts/PeriodContext'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { PeriodNavigator } from '@/components/layout/PeriodNavigator'
 import { FixedAssetModal, displayAssetType } from '@/components/growth/FixedAssetModal'
+import { CloseSecurityModal } from '@/components/growth/CloseSecurityModal'
 import { FixedDepositModal } from '@/components/growth/FixedDepositModal'
 import { GrowthWalletTransactionModal } from '@/components/growth/GrowthWalletTransactionModal'
 import { SavingsGoalFormModal } from '@/components/growth/SavingsGoalFormModal'
@@ -30,8 +31,19 @@ import { deleteSavingsGoalWithOrderedTxRemoval } from '@/lib/savings-delete-goal
 import type { FixedAsset, FixedDeposit, SavingsGoal } from '@/types/database'
 import { cn } from '@/lib/utils'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
+import { addMonths, format } from 'date-fns'
 
 const growthNav = getAppNavItem('/growth')
+
+type GrowthSecurityRow = FixedDeposit & {
+  name?: string | null
+  security_type?: 'bank_deposit' | 'bonds' | 'sukuk' | string | null
+  duration_months?: number | null
+  interest_rate?: number | null
+  return_type?: 'fixed' | 'variable' | string | null
+  closing_amount?: number | null
+  closing_date?: string | null
+}
 
 export default function GrowthPage() {
   const { t, locale } = useLanguage()
@@ -56,6 +68,8 @@ export default function GrowthPage() {
 
   const [depositModalOpen, setDepositModalOpen] = useState(false)
   const [editingDeposit, setEditingDeposit] = useState<FixedDeposit | null>(null)
+  const [closeSecurityOpen, setCloseSecurityOpen] = useState(false)
+  const [selectedSecurity, setSelectedSecurity] = useState<GrowthSecurityRow | null>(null)
   const [assetModalOpen, setAssetModalOpen] = useState(false)
   const [editingAsset, setEditingAsset] = useState<FixedAsset | null>(null)
 
@@ -67,7 +81,10 @@ export default function GrowthPage() {
 
   // حساب الإجماليات للأقسام الثلاثة
   const totalSavings = goals.reduce((acc, g) => acc + Number(g.current_amount || 0), 0)
-  const totalDeposits = fixedDeposits.reduce((acc, d) => acc + Number(d.amount || 0), 0)
+  const totalDeposits = fixedDeposits.reduce((acc, d) => {
+    const row = d as GrowthSecurityRow
+    return row.status === 'closed' ? acc : acc + Number(d.amount || 0)
+  }, 0)
   const totalAssets = fixedAssets.reduce((acc, a) => acc + Number(a.estimated_value || 0), 0)
 
   const namedLabel = useCallback(
@@ -108,11 +125,13 @@ export default function GrowthPage() {
 
       const [goalsRes, depositsRes, assetsRes] = await Promise.all([
         supabase.from('savings_goals').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-        supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (supabase as any)
           .from('fixed_deposits')
-          .select('id, name_ar, name_en, amount, roi_percentage, start_date, due_date, status, created_at')
+          .select(
+            'id, name, security_type, amount, duration_months, interest_rate, return_type, start_date, status, closing_amount, closing_date, created_at, name_ar, name_en, roi_percentage, due_date'
+          )
           .eq('user_id', uid)
-          .eq('status', 'active')
           .order('created_at', { ascending: false }),
         supabase
           .from('fixed_assets')
@@ -131,7 +150,7 @@ export default function GrowthPage() {
       setFetchError(errs.join(' · '))
 
       setGoals(goalsRes.error ? [] : ((goalsRes.data as SavingsGoal[] | null) ?? []))
-      setFixedDeposits(depositsRes.error ? [] : ((depositsRes.data as FixedDeposit[] | null) ?? []))
+      setFixedDeposits(depositsRes.error ? [] : ((depositsRes.data as unknown as FixedDeposit[] | null) ?? []))
       setFixedAssets(assetsRes.error ? [] : ((assetsRes.data as FixedAsset[] | null) ?? []))
       setLoading(false)
     },
@@ -239,6 +258,11 @@ export default function GrowthPage() {
   function openEditDeposit(d: FixedDeposit) {
     setEditingDeposit(d)
     setDepositModalOpen(true)
+  }
+
+  function openCloseModal(d: GrowthSecurityRow) {
+    setSelectedSecurity(d)
+    setCloseSecurityOpen(true)
   }
 
   function openNewAsset() {
@@ -662,63 +686,130 @@ export default function GrowthPage() {
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">
-                  {fixedDeposits.map((deposit) => (
-                  <div key={deposit.id} className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-sm">
-                    <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                      <h3 className="text-start text-lg font-bold text-[#1F2937]">
-                        {namedLabel(deposit.name_ar, deposit.name_en)}
-                      </h3>
-                      <div className="flex shrink-0 items-center gap-1">
-                        <button
-                          type="button"
-                          onClick={() => openEditDeposit(deposit)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-white hover:text-[#2563EB]"
-                          aria-label={t('تعديل', 'Edit')}
-                        >
-                          <Pencil className="h-[18px] w-[18px]" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteDeposit(deposit)}
-                          disabled={deletingDepositId === deposit.id}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-red-50 hover:text-[#EF4444] disabled:opacity-50"
-                          aria-label={t('حذف', 'Delete')}
-                        >
-                          {deletingDepositId === deposit.id ? (
-                            <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                          ) : (
-                            <Trash2 className="h-[18px] w-[18px]" />
+                  {fixedDeposits.map((deposit) => {
+                    const row = deposit as GrowthSecurityRow
+                    const isClosed = row.status === 'closed'
+                    const amount = Number(row.amount || 0)
+                    const closingAmount = Number(row.closing_amount || 0)
+                    const profitLoss = isClosed ? closingAmount - amount : 0
+                    const securityName = row.name ?? deposit.name_ar ?? deposit.name_en ?? t('ورقة مالية', 'Security')
+                    const durationMonths = Number(row.duration_months || 0)
+                    const securityTypeLabel =
+                      row.security_type === 'bank_deposit'
+                        ? t('وديعة بنكية', 'Bank Deposit')
+                        : row.security_type === 'bonds'
+                          ? t('سندات', 'Bonds')
+                          : row.security_type === 'sukuk'
+                            ? t('صكوك إسلامية', 'Islamic Sukuk')
+                            : t('ورقة مالية', 'Security')
+                    const expectedMaturity =
+                      row.start_date && durationMonths > 0
+                        ? addMonths(new Date(row.start_date), durationMonths)
+                        : null
+
+                    return (
+                      <div key={deposit.id} className="relative rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div
+                          className={cn(
+                            'absolute top-4 left-4 rtl:left-auto rtl:right-4 rounded-full px-3 py-1 text-xs font-bold',
+                            isClosed ? 'bg-gray-100 text-gray-600' : 'bg-amber-100 text-amber-700'
                           )}
-                        </button>
+                        >
+                          {isClosed ? t('مغلقة', 'Closed') : t('نشطة', 'Active')}
+                        </div>
+
+                        <div className="mb-4 mt-8">
+                          <p className="mb-1 text-xs font-bold text-amber-600">{securityTypeLabel}</p>
+                          <h3 className="text-lg font-bold text-gray-900">{securityName}</h3>
+                        </div>
+
+                        <div className="mb-4 grid grid-cols-2 gap-4 rounded-xl bg-gray-50 p-4">
+                          <div>
+                            <p className="text-xs font-medium text-gray-500">{t('قيمة الاكتتاب', 'Subscribed Amount')}</p>
+                            <p className="mt-1 font-bold text-gray-900" dir="ltr">
+                              {formatMoney(amount, locale)}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-xs font-medium text-gray-500">{t('العائد / النوع', 'Return / Type')}</p>
+                            <p className="mt-1 font-bold text-gray-900" dir="ltr">
+                              {Number(row.interest_rate ?? 0)}%{' '}
+                              <span className="text-xs text-gray-500">
+                                ({row.return_type === 'variable' ? t('متغير', 'Var') : t('ثابت', 'Fixed')})
+                              </span>
+                            </p>
+                          </div>
+
+                          {isClosed ? (
+                            <>
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">{t('قيمة الإغلاق', 'Closing Amount')}</p>
+                                <p className="mt-1 font-bold text-gray-900" dir="ltr">
+                                  {formatMoney(closingAmount, locale)}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">{t('الربح / الخسارة', 'Profit / Loss')}</p>
+                                <p className={cn('mt-1 font-bold', profitLoss >= 0 ? 'text-emerald-600' : 'text-rose-600')} dir="ltr">
+                                  {profitLoss > 0 ? '+' : ''}
+                                  {formatMoney(profitLoss, locale)}
+                                </p>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">{t('المدة', 'Duration')}</p>
+                                <p className="mt-1 font-bold text-gray-900">
+                                  {durationMonths || 0} {t('أشهر', 'Months')}
+                                </p>
+                              </div>
+                              <div>
+                                <p className="text-xs font-medium text-gray-500">{t('الاستحقاق المتوقع', 'Expected Maturity')}</p>
+                                <p className="mt-1 font-bold text-gray-900" dir="ltr">
+                                  {expectedMaturity ? format(expectedMaturity, 'dd MMM yyyy') : '—'}
+                                </p>
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {!isClosed ? (
+                          <button
+                            type="button"
+                            onClick={() => openCloseModal(row)}
+                            className="w-full rounded-xl border border-gray-200 bg-white py-2.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 hover:text-rose-600"
+                          >
+                            {t('إغلاق الورقة المالية', 'Close Security')}
+                          </button>
+                        ) : null}
+
+                        <div className="mt-3 flex justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => openEditDeposit(deposit)}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-white hover:text-[#2563EB]"
+                            aria-label={t('تعديل', 'Edit')}
+                          >
+                            <Pencil className="h-[18px] w-[18px]" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteDeposit(deposit)}
+                            disabled={deletingDepositId === deposit.id}
+                            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-red-50 hover:text-[#EF4444] disabled:opacity-50"
+                            aria-label={t('حذف', 'Delete')}
+                          >
+                            {deletingDepositId === deposit.id ? (
+                              <Loader2 className="h-[18px] w-[18px] animate-spin" />
+                            ) : (
+                              <Trash2 className="h-[18px] w-[18px]" />
+                            )}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex flex-col gap-2 text-sm text-[#6B7280] sm:flex-row sm:items-center sm:justify-between">
-                      <p dir="ltr">
-                        {t('المبلغ:', 'Amount:')}{' '}
-                        <span className="font-medium text-[#1F2937]">
-                          {formatMoney(Number(deposit.amount), locale)}
-                        </span>
-                      </p>
-                      <div className="inline-flex items-center gap-1.5 rounded-lg bg-[#10B981]/10 px-2.5 py-1 text-xs font-bold text-[#059669]">
-                        <ArrowLeft className="h-3.5 w-3.5 rotate-[-135deg]" aria-hidden />
-                        {t('العائد السنوي:', 'Annual yield:')} {Number(deposit.roi_percentage)}%
-                      </div>
-                    </div>
-                    <p className="mt-3 border-t border-[#E5E7EB] pt-2 text-start text-xs text-[#6B7280]">
-                      {t('تاريخ البدء:', 'Start:')}{' '}
-                      <span dir="ltr" className="tabular-nums">
-                        {deposit.start_date
-                          ? formatGregorianDate(parseLocalISODate(deposit.start_date.slice(0, 10)), locale)
-                          : '—'}
-                      </span>
-                      {' · '}
-                      {t('تاريخ الاستحقاق:', 'Due:')}{' '}
-                      <span dir="ltr" className="tabular-nums">
-                        {formatGregorianDate(parseLocalISODate(deposit.due_date.slice(0, 10)), locale)}
-                      </span>
-                    </p>
-                  </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
             </div>
@@ -868,6 +959,23 @@ export default function GrowthPage() {
         }}
         onSaved={() => void fetchGrowthData()}
         edit={editingDeposit}
+      />
+
+      <CloseSecurityModal
+        open={closeSecurityOpen}
+        onClose={() => {
+          setCloseSecurityOpen(false)
+          setSelectedSecurity(null)
+        }}
+        onSaved={() => void fetchGrowthData()}
+        securityId={selectedSecurity?.id ?? null}
+        securityName={
+          selectedSecurity?.name ??
+          selectedSecurity?.name_ar ??
+          selectedSecurity?.name_en ??
+          ''
+        }
+        subscribedAmount={Number(selectedSecurity?.amount || 0)}
       />
 
       <FixedAssetModal

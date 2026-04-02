@@ -17,33 +17,37 @@ type Props = {
 
 export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
   const { t } = useLanguage()
-  const [nameAr, setNameAr] = useState('')
-  const [nameEn, setNameEn] = useState('')
+  const [securityType, setSecurityType] = useState<'bank_deposit' | 'bonds' | 'sukuk'>('bank_deposit')
+  const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
-  const [roi, setRoi] = useState('')
+  const [durationMonths, setDurationMonths] = useState('')
+  const [interestRate, setInterestRate] = useState('')
+  const [returnType, setReturnType] = useState<'fixed' | 'variable'>('fixed')
   const [startDate, setStartDate] = useState('')
-  const [dueDate, setDueDate] = useState('')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
     if (!open) return
     setError('')
+    const row = edit as any
     if (edit) {
-      setNameAr(edit.name_ar)
-      setNameEn(edit.name_en)
+      setSecurityType((row.security_type as 'bank_deposit' | 'bonds' | 'sukuk') ?? 'bank_deposit')
+      setName((row.name as string) ?? row.name_ar ?? row.name_en ?? '')
       setAmount(String(edit.amount))
-      setRoi(String(edit.roi_percentage))
-      setStartDate(edit.start_date?.slice(0, 10) ?? dateToLocalISODate(new Date()))
-      setDueDate(edit.due_date.slice(0, 10))
+      setDurationMonths(String((row.duration_months as number) ?? ''))
+      setInterestRate(String((row.interest_rate as number) ?? row.roi_percentage ?? ''))
+      setReturnType((row.return_type as 'fixed' | 'variable') ?? 'fixed')
+      setStartDate((row.start_date as string | undefined)?.slice(0, 10) ?? dateToLocalISODate(new Date()))
     } else {
-      setNameAr('')
-      setNameEn('')
+      setSecurityType('bank_deposit')
+      setName('')
       setAmount('')
-      setRoi('')
+      setDurationMonths('')
+      setInterestRate('')
+      setReturnType('fixed')
       const today = dateToLocalISODate(new Date())
       setStartDate(today)
-      setDueDate(today)
     }
   }, [open, edit])
 
@@ -52,10 +56,9 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
-    const ar = nameAr.trim()
-    const en = nameEn.trim()
-    if (!ar && !en) {
-      setError(t('يرجى إدخال اسم الوديعة', 'Please enter a deposit name'))
+    const trimmedName = name.trim()
+    if (!trimmedName) {
+      setError(t('يرجى إدخال اسم الجهة / الورقة المالية', 'Please enter security/institution name'))
       return
     }
     const num = parseFloat(amount.replace(/,/g, ''))
@@ -63,17 +66,18 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
       setError(t('المبلغ غير صالح', 'Invalid amount'))
       return
     }
-    const roiNum = parseFloat(roi.replace(/,/g, ''))
-    if (Number.isNaN(roiNum) || roiNum < 0) {
-      setError(t('نسبة العائد غير صالحة', 'Invalid ROI'))
+    const monthsNum = parseInt(durationMonths, 10)
+    if (Number.isNaN(monthsNum) || monthsNum <= 0) {
+      setError(t('مدة الورقة المالية غير صالحة', 'Invalid security duration'))
       return
     }
-    if (!startDate || !dueDate) {
-      setError(t('حدد تاريخي البدء والاستحقاق', 'Set start and due dates'))
+    const interestRateNum = parseFloat(interestRate.replace(/,/g, ''))
+    if (Number.isNaN(interestRateNum) || interestRateNum < 0) {
+      setError(t('نسبة العائد غير صالحة', 'Invalid interest rate'))
       return
     }
-    if (dueDate < startDate) {
-      setError(t('تاريخ الاستحقاق يجب أن يكون بعد تاريخ البدء', 'Due date must be on or after start date'))
+    if (!startDate) {
+      setError(t('حدد تاريخ الاكتتاب', 'Set subscription date'))
       return
     }
 
@@ -91,13 +95,15 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
       const { data: walletData, error: walletError } = await (supabase as any).from('growth_wallets').select('balance').single()
       const walletBalance = !walletError && walletData ? Number(walletData.balance) || 0 : 0
 
-      const row = {
-        name_ar: ar || en,
-        name_en: en || ar,
+      const row: any = {
+        security_type: securityType,
+        name: trimmedName,
         amount: num,
-        roi_percentage: roiNum,
+        duration_months: monthsNum,
+        interest_rate: interestRateNum,
+        return_type: returnType,
         start_date: startDate,
-        due_date: dueDate,
+        status: 'active',
       }
 
       if (edit) {
@@ -114,13 +120,13 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
             user_id: user.id,
             amount: delta,
             transaction_type: 'withdrawal',
-          })
+          } as any)
           if (walletTxErr) {
             setError(walletTxErr.message)
             return
           }
         }
-        const { error: up } = await supabase.from('fixed_deposits').update(row).eq('id', edit.id)
+        const { error: up } = await (supabase as any).from('fixed_deposits').update(row as any).eq('id', edit.id)
         if (up) {
           if (num > previousAmount) {
             // compensate wallet on failed update
@@ -129,7 +135,7 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
               user_id: user.id,
               amount: num - previousAmount,
               transaction_type: 'deposit',
-            })
+            } as any)
           }
           setError(up.message)
           return
@@ -141,7 +147,7 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
             user_id: user.id,
             amount: Math.abs(delta),
             transaction_type: 'deposit',
-          })
+          } as any)
           if (walletTxErr) {
             setError(walletTxErr.message)
             return
@@ -158,16 +164,15 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
           user_id: user.id,
           amount: num,
           transaction_type: 'withdrawal',
-        })
+        } as any)
         if (walletTxErr) {
           setError(walletTxErr.message)
           return
         }
-        const { error: ins } = await supabase.from('fixed_deposits').insert({
+        const { error: ins } = await (supabase as any).from('fixed_deposits').insert({
           ...row,
           user_id: user.id,
-          status: 'active' as const,
-        })
+        } as any)
         if (ins) {
           // compensate wallet if insert fails
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -175,7 +180,7 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
             user_id: user.id,
             amount: num,
             transaction_type: 'deposit',
-          })
+          } as any)
           setError(ins.message)
           return
         }
@@ -208,7 +213,7 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
       >
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <h2 id="fd-modal-title" className="text-lg font-bold text-slate-900">
-            {edit ? t('تعديل وديعة', 'Edit deposit') : t('وديعة جديدة', 'New deposit')}
+            {edit ? t('تعديل ورقة مالية', 'Edit security') : t('ورقة مالية جديدة', 'New security')}
           </h2>
           <button
             type="button"
@@ -229,27 +234,32 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
 
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-800">
-              {t('اسم الوديعة / الصك (عربي)', 'Deposit name (Arabic)')}
+              {t('نوع الورقة المالية', 'Security type')}
+            </label>
+            <select
+              value={securityType}
+              onChange={(e) => setSecurityType(e.target.value as 'bank_deposit' | 'bonds' | 'sukuk')}
+              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
+            >
+              <option value="bank_deposit">{t('وديعة بنكية', 'Bank Deposit')}</option>
+              <option value="bonds">{t('سندات', 'Bonds')}</option>
+              <option value="sukuk">{t('صكوك إسلامية', 'Islamic Sukuk')}</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-800">
+              {t('اسم الجهة / الورقة المالية', 'Institution / Security name')}
             </label>
             <input
-              value={nameAr}
-              onChange={(e) => setNameAr(e.target.value)}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
             />
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-800">
-              {t('الاسم (إنجليزي)', 'Name (English)')}
+              {t('إجمالي قيمة الاكتتاب', 'Total subscription amount')}
             </label>
-            <input
-              value={nameEn}
-              onChange={(e) => setNameEn(e.target.value)}
-              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
-              dir="ltr"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-800">{t('المبلغ', 'Amount')}</label>
             <input
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
@@ -261,11 +271,25 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-800">
-              {t('نسبة العائد السنوي %', 'Annual ROI %')}
+              {t('مدة الورقة المالية بالأشهر', 'Security duration (months)')}
             </label>
             <input
-              value={roi}
-              onChange={(e) => setRoi(e.target.value)}
+              value={durationMonths}
+              onChange={(e) => setDurationMonths(e.target.value)}
+              type="number"
+              inputMode="numeric"
+              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
+              dir="ltr"
+              min={1}
+            />
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-800">
+              {t('نسبة العائد', 'Interest rate')}
+            </label>
+            <input
+              value={interestRate}
+              onChange={(e) => setInterestRate(e.target.value)}
               type="text"
               inputMode="decimal"
               className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
@@ -274,24 +298,25 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
           </div>
           <div>
             <label className="mb-1.5 block text-sm font-medium text-slate-800">
-              {t('تاريخ البدء', 'Start date')}
+              {t('نوع العائد', 'Return type')}
+            </label>
+            <select
+              value={returnType}
+              onChange={(e) => setReturnType(e.target.value as 'fixed' | 'variable')}
+              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
+            >
+              <option value="fixed">{t('ثابت', 'Fixed')}</option>
+              <option value="variable">{t('متغير', 'Variable')}</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-slate-800">
+              {t('تاريخ الاكتتاب', 'Subscription date')}
             </label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
-            />
-          </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-800">
-              {t('تاريخ الاستحقاق', 'Due date')}
-            </label>
-            <input
-              type="date"
-              value={dueDate}
-              onChange={(e) => setDueDate(e.target.value)}
-              min={startDate || undefined}
               className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-[#2563EB]/20 focus:border-[#2563EB] focus:ring-2"
             />
           </div>
