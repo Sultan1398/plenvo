@@ -420,17 +420,17 @@ export default function InvestmentsPage() {
                     </button>
                   </div>
                 ) : (
-                  <table className="w-full min-w-[900px] text-start text-sm">
+                  <table className="w-full min-w-[900px] border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-gray-100 bg-gray-50/50 text-xs font-semibold text-gray-500">
-                        <th className="px-4 py-3">{t('المسار', 'Path')}</th>
-                        <th className="px-4 py-3">{t('الاستثمار', 'Investment')}</th>
-                        <th className="px-4 py-3">{t('تاريخ الفتح', 'Open Date')}</th>
-                        <th className="px-4 py-3">{t('قيمة الفتح', 'Open Value')}</th>
-                        <th className="px-4 py-3">{t('تاريخ الإغلاق', 'Close Date')}</th>
-                        <th className="px-4 py-3">{t('قيمة الإغلاق', 'Close Value')}</th>
-                        <th className="px-4 py-3">{t('الربح/الخسارة', 'P/L')}</th>
-                        <th className="px-4 py-3 text-center">{t('الإجراءات', 'Actions')}</th>
+                        <th className="px-4 py-4 text-center">{t('المسار', 'Path')}</th>
+                        <th className="px-4 py-4 text-start">{t('الاستثمار', 'Investment')}</th>
+                        <th className="px-4 py-4 text-center">{t('تاريخ الفتح', 'Open Date')}</th>
+                        <th className="px-4 py-4 text-center">{t('قيمة الفتح', 'Open Value')}</th>
+                        <th className="px-4 py-4 text-center">{t('تاريخ الإغلاق', 'Close Date')}</th>
+                        <th className="px-4 py-4 text-center">{t('قيمة الإغلاق', 'Close Value')}</th>
+                        <th className="px-4 py-4 text-center">{t('الربح/الخسارة', 'P/L')}</th>
+                        <th className="px-4 py-4 text-center">{t('الإجراءات', 'Actions')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -454,42 +454,47 @@ export default function InvestmentsPage() {
 
                         return (
                           <tr key={deal.id} className="border-b border-gray-50 transition-colors hover:bg-gray-50/50">
-                            <td className="whitespace-nowrap px-4 py-4">
+                            <td className="whitespace-nowrap px-4 py-4 text-center">
                               <span
                                 className={cn(
-                                  'inline-flex rounded-md border px-2 py-1 text-xs font-bold',
+                                  'inline-flex rounded-md border px-2.5 py-1 text-xs font-bold',
                                   path.badgeClassName
                                 )}
                               >
                                 {path.label}
                               </span>
                             </td>
-                            <td className="max-w-[200px] truncate px-4 py-4 font-bold text-gray-900" title={displayName}>
+                            <td
+                              className="max-w-[220px] truncate whitespace-nowrap px-4 py-4 text-start font-bold text-gray-900"
+                              title={displayName}
+                            >
                               {displayName}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4 text-gray-500" dir="ltr">
+                            <td className="whitespace-nowrap px-4 py-4 text-center text-gray-500" dir="ltr">
                               {openDateStr}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4 font-bold text-gray-900" dir="ltr">
+                            <td className="whitespace-nowrap px-4 py-4 text-center font-bold text-gray-900" dir="ltr">
                               {formatMoney(entryAmount, locale)}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4 text-gray-500" dir="ltr">
+                            <td className="whitespace-nowrap px-4 py-4 text-center text-gray-500" dir="ltr">
                               {closeDateStr}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4 font-bold text-gray-900" dir="ltr">
+                            <td className="whitespace-nowrap px-4 py-4 text-center font-bold text-gray-900" dir="ltr">
                               {!isOpen && exitAmount != null ? formatMoney(exitAmount, locale) : '—'}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4 font-bold" dir="ltr">
-                              {profitLoss == null ? (
+                            <td className="whitespace-nowrap px-4 py-4 text-center font-bold" dir="ltr">
+                              {isOpen ? (
+                                <span className="text-gray-400">-</span>
+                              ) : profitLoss == null ? (
                                 <span className="text-gray-400">—</span>
                               ) : (
-                                <span className={isProfit ? 'text-emerald-600' : 'text-red-600'}>
+                                <span className={isProfit ? 'text-green-600' : 'text-red-600'}>
                                   {isProfit ? '+' : ''}
                                   {formatMoney(profitLoss, locale)}
                                 </span>
                               )}
                             </td>
-                            <td className="whitespace-nowrap px-4 py-4">
+                            <td className="whitespace-nowrap px-4 py-4 text-center">
                               <div className="flex items-center justify-center gap-2">
                                 <button
                                   type="button"
