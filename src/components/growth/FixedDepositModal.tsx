@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import type { Database, FixedDeposit } from '@/types/database'
-import { dateToLocalISODate } from '@/lib/date-local'
+import { dateToLocalISODate, parseLocalISODate } from '@/lib/date-local'
+import { addMonths } from 'date-fns'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -94,14 +95,21 @@ export function FixedDepositModal({ open, onClose, onSaved, edit }: Props) {
       const { data: walletData, error: walletError } = await supabase.from('growth_wallets').select('balance').single()
       const walletBalance = !walletError && walletData ? Number(walletData.balance) || 0 : 0
 
+      /** توافق مع أعمدة السكيمة القديمة (NOT NULL في قاعدة البيانات) */
+      const dueDate = dateToLocalISODate(addMonths(parseLocalISODate(startDate), monthsNum))
+
       const row: Partial<Database['public']['Tables']['fixed_deposits']['Insert']> = {
         security_type: securityType,
         name: trimmedName,
+        name_ar: trimmedName,
+        name_en: trimmedName,
         amount: num,
         duration_months: monthsNum,
         interest_rate: interestRateNum,
+        roi_percentage: interestRateNum,
         return_type: returnType,
         start_date: startDate,
+        due_date: dueDate,
         status: 'active',
       }
 
