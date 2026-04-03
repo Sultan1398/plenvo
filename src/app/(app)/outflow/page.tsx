@@ -355,7 +355,7 @@ export default function OutflowPage() {
                           return (
                             <tr
                               key={row.id}
-                              className="border-b border-gray-50 transition-colors hover:bg-gray-50/50"
+                              className="border-b border-gray-50 bg-white transition-colors hover:bg-gray-50/50"
                             >
                               <td className="whitespace-nowrap px-4 py-4 text-center">
                                 <span
@@ -447,7 +447,7 @@ export default function OutflowPage() {
 
           {isObligationsOpen && (
             <div className="mt-2 border-t border-gray-100 p-2 sm:p-4">
-              <div className="rounded-2xl border border-slate-200/90 bg-gradient-to-b from-slate-50/90 via-slate-50/50 to-slate-100/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] sm:p-6">
+              <div className="rounded-2xl border border-border bg-white p-4 shadow-sm sm:p-6">
                 {loading ? (
                   <div className="flex flex-col items-center gap-2 py-16 text-muted">
                     <Loader2 className="h-8 w-8 animate-spin text-brand" />
@@ -521,7 +521,7 @@ export default function OutflowPage() {
                           return (
                             <tr
                               key={row.id}
-                              className="border-b border-gray-50 transition-colors hover:bg-gray-50/50"
+                              className="border-b border-gray-50 bg-white transition-colors hover:bg-gray-50/50"
                             >
                               <td className="whitespace-nowrap px-4 py-4 text-start font-bold text-gray-900">
                                 {name || t('بدون اسم', 'Unnamed')}
@@ -572,20 +572,21 @@ export default function OutflowPage() {
 
                               <td className="whitespace-nowrap px-4 py-4 text-center">
                                 <div className="flex items-center justify-center gap-2">
-                                  {rem > 0.0001 ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => setPayObligation(row)}
-                                      className="rounded-lg bg-[#2563EB] px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-[#1D4ED8]"
-                                    >
-                                      {t('سداد', 'Pay')}
-                                    </button>
-                                  ) : (
-                                    <span className="inline-flex h-8 max-w-[9.5rem] items-center gap-1.5 rounded-lg bg-emerald-50 px-2.5 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200/60">
-                                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" aria-hidden />
-                                      <span className="leading-tight">{t('مسدَّد بالكامل', 'Fully paid')}</span>
-                                    </span>
-                                  )}
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (rem > 0) setPayObligation(row)
+                                    }}
+                                    disabled={rem <= 0}
+                                    className={cn(
+                                      'rounded-lg px-3 py-1.5 text-xs font-bold transition-colors',
+                                      rem <= 0
+                                        ? 'cursor-not-allowed bg-gray-100 text-gray-400'
+                                        : 'bg-[#2563EB] text-white hover:bg-[#1D4ED8]'
+                                    )}
+                                  >
+                                    {t('سداد', 'Pay')}
+                                  </button>
 
                                   <button
                                     type="button"
@@ -647,11 +648,6 @@ export default function OutflowPage() {
         }}
         onSaved={reloadAll}
         edit={editingObligation}
-        markerPaidSum={
-          editingObligation
-            ? sumLegacyMarkerPayments(obligationPaymentOutflows, editingObligation.id)
-            : 0
-        }
         periodStart={periodDates.start}
         periodEnd={periodDates.end}
       />

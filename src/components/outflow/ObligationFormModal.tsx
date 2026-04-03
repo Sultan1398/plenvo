@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import type { Obligation } from '@/types/database'
 import { dateToLocalISODate, defaultDateInPeriod } from '@/lib/date-local'
-import { obligationPaidAmount } from '@/lib/obligation-helpers'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -14,8 +13,6 @@ type Props = {
   onClose: () => void
   onSaved: () => void
   edit: Obligation | null
-  /** مجموع سدادات العلامة (مخطط بدون paid_amount) */
-  markerPaidSum?: number
   periodStart: Date
   periodEnd: Date
 }
@@ -25,7 +22,6 @@ export function ObligationFormModal({
   onClose,
   onSaved,
   edit,
-  markerPaidSum = 0,
   periodStart,
   periodEnd,
 }: Props) {
@@ -33,6 +29,7 @@ export function ObligationFormModal({
   const [nameAr, setNameAr] = useState('')
   const [nameEn, setNameEn] = useState('')
   const [totalAmount, setTotalAmount] = useState('')
+  const [paidAmount, setPaidAmount] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [dateStr, setDateStr] = useState(() => defaultDateInPeriod(periodStart, periodEnd))
   const [saving, setSaving] = useState(false)
@@ -48,12 +45,14 @@ export function ObligationFormModal({
       setNameAr(edit.name_ar)
       setNameEn(edit.name_en)
       setTotalAmount(String(edit.amount))
+      setPaidAmount(String(edit.paid_amount ?? 0))
       setDueDate(edit.due_date)
       setDateStr(edit.date)
     } else {
       setNameAr('')
       setNameEn('')
       setTotalAmount('')
+      setPaidAmount('0')
       setDueDate(dateToLocalISODate(periodStart))
       setDateStr(defaultDateInPeriod(periodStart, periodEnd))
     }
@@ -73,6 +72,17 @@ export function ObligationFormModal({
     const num = parseFloat(totalAmount.replace(/,/g, ''))
     if (Number.isNaN(num) || num <= 0) {
       setError(t('مبلغ الالتزام يجب أن يكون أكبر من صفر', 'Obligation amount must be greater than zero'))
+      return
+    }
+    const paidNum = parseFloat((paidAmount || '0').replace(/,/g, ''))
+    if (Number.isNaN(paidNum) || paidNum < 0) {
+      setError(t('المبلغ المسدد يجب أن يكون صفر أو أكبر', 'Paid amount must be zero or greater'))
+      return
+    }
+    if (paidNum > num + 0.0001) {
+      setError(
+        t('المبلغ المسدد لا يمكن أن يكون أكبر من إجمالي الالتزام', 'Paid amount cannot exceed total obligation')
+      )
       return
     }
     if (dateStr < minD || dateStr > maxD) {
@@ -101,25 +111,18 @@ export function ObligationFormModal({
         name_ar: ar || en,
         name_en: en || ar,
         amount: num,
+        paid_amount: paidNum,
         due_date: dueDate,
         date: dateStr,
       }
 
       if (edit) {
-        const paid = obligationPaidAmount(edit, markerPaidSum)
-        if (num < paid - 0.0001) {
-          setError(
-            t('إجمالي الالتزام لا يمكن أن يكون أقل من المسدَّد بالفعل', 'Total cannot be less than amount already paid')
-          )
-          return
-        }
         const { error: up } = await supabase.from('obligations').update(row).eq('id', edit.id)
         if (up) {
           setError(up.message)
           return
         }
       } else {
-        /** لا نرسل paid_amount — الافتراضي 0 بعد migration 002؛ المخطط 001 بدون هذا العمود */
         const { error: ins } = await supabase.from('obligations').insert({ ...row, user_id: user.id })
         if (ins) {
           setError(ins.message)
@@ -221,6 +224,23 @@ export function ObligationFormModal({
               className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-brand/20 focus:border-brand focus:ring-2"
               dir="ltr"
               placeholder={locale === 'ar' ? '٠.٠٠' : '0.00'}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="obl-paid-amount" className="mb-1.5 block text-sm font-medium text-slate-800">
+              {t('المبلغ المسدد (حتى الآن)', 'Paid Amount')}
+            </label>
+            <input
+              id="obl-paid-amount"
+              type="number"
+              step="0.01"
+              min="0"
+              value={paidAmount}
+              onChange={(e) => setPaidAmount(e.target.value)}
+              className="w-full rounded-xl border border-border bg-white px-3 py-2.5 text-sm outline-none ring-brand/20 focus:border-brand focus:ring-2"
+              dir="ltr"
+              placeholder="0.00"
             />
           </div>
 
