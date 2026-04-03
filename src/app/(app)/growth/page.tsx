@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   ArrowDownLeft,
-  ArrowLeft,
   ArrowUpRight,
   Loader2,
   Pencil,
+  Sprout,
   Trash2,
 } from 'lucide-react'
-import { Money as MoneyBag, Vault, Plus as PhosphorPlus } from '@phosphor-icons/react'
+import { Money as MoneyBag, Plus as PhosphorPlus } from '@phosphor-icons/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { usePeriod } from '@/contexts/PeriodContext'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -247,9 +247,18 @@ export default function GrowthPage() {
         <div className="flex flex-col justify-between gap-4 p-6 md:flex-row md:items-center md:p-8">
           <div className="flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50">
-                <Vault weight="duotone" className="h-5 w-5 text-[#2563EB]" aria-hidden />
-              </div>
+              <span
+                className={cn(
+                  'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
+                  'bg-teal-50 shadow-inner shadow-white/60 ring-1 ring-slate-900/[0.07]'
+                )}
+              >
+                <Sprout
+                  className="h-5 w-5 text-teal-600"
+                  strokeWidth={2.35}
+                  aria-hidden
+                />
+              </span>
               <h2 className="text-sm font-bold text-gray-500">
                 {t('رصيد محفظة النمو (الادخار)', 'Growth Wallet Balance (Savings)')}
               </h2>
@@ -270,8 +279,7 @@ export default function GrowthPage() {
               }}
               className="flex items-center justify-center gap-x-2 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
-              <ArrowLeft className="h-4 w-4 rotate-[135deg]" aria-hidden />
-              {t('استرجاع للمحفظة', 'Withdraw')}
+              {t('سحب', 'Withdraw')}
             </button>
             <button
               type="button"
@@ -282,32 +290,40 @@ export default function GrowthPage() {
               className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
             >
               <PhosphorPlus weight="bold" className="h-5 w-5" aria-hidden />
-              {t('إيداع من المحفظة', 'Deposit')}
+              {t('إيداع', 'Deposit')}
             </button>
           </div>
         </div>
       </div>
 
       <div className={cn('flex flex-col gap-8', locale === 'ar' ? 'text-right' : 'text-left')}>
-        {/* قسم صناديق الادخار الرئيسي */}
-        <div className="mb-4 mt-2 flex items-center justify-between px-2">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50">
-              <MoneyBag weight="duotone" className="h-6 w-6 text-[#2563EB]" aria-hidden />
-            </div>
-            <h2 className="text-xl font-bold text-[#1F2937]">{t('صناديق الادخار', 'Savings Funds')}</h2>
-          </div>
-          <button
-            type="button"
-            onClick={openNewGoal}
-            className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#2563EB]/10 px-4 py-2 text-sm font-bold text-[#2563EB] transition-colors hover:bg-[#2563EB]/20"
-          >
-            <PhosphorPlus weight="bold" className="h-4 w-4" aria-hidden />
-            {t('هدف جديد', 'New Goal')}
-          </button>
-        </div>
-
         <div className="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-5 flex flex-col gap-4 border-b border-gray-100 pb-5 sm:mb-6 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+            <div className="flex items-center gap-3">
+              <span
+                className={cn(
+                  'inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl sm:h-11 sm:w-11',
+                  'bg-teal-50 shadow-inner shadow-white/60 ring-1 ring-slate-900/[0.07]'
+                )}
+              >
+                <Sprout
+                  className="h-[1.35rem] w-[1.35rem] text-teal-600 sm:h-6 sm:w-6"
+                  strokeWidth={2.35}
+                  aria-hidden
+                />
+              </span>
+              <h2 className="text-xl font-bold text-[#1F2937]">{t('صناديق الادخار', 'Savings Funds')}</h2>
+            </div>
+            <button
+              type="button"
+              onClick={openNewGoal}
+              className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-full bg-teal-50 px-4 py-2.5 text-sm font-bold text-teal-700 ring-1 ring-teal-200/80 transition-colors hover:bg-teal-100 sm:w-auto"
+            >
+              <PhosphorPlus weight="bold" className="h-4 w-4" aria-hidden />
+              {t('هدف جديد', 'New Goal')}
+            </button>
+          </div>
+
           {goals.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl bg-gray-50 px-6 py-16 text-center">
               <MoneyBag weight="duotone" className="mb-4 h-16 w-16 text-gray-300" aria-hidden />
