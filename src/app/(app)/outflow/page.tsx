@@ -327,55 +327,96 @@ export default function OutflowPage() {
                     </button>
                   </div>
                 ) : (
-                  <ul className="divide-y divide-border">
-                    {outflows.map((row) => (
-                      <li
-                        key={row.id}
-                        className="flex flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between hover:bg-surface/30"
-                      >
-                        <div className="min-w-0 flex-1">
-                          <p className="font-semibold text-slate-900">
-                            {locale === 'ar' ? row.name_ar : row.name_en}
-                          </p>
-                          <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted">
-                            <span
-                              className={cn(
-                                'rounded-md px-2 py-0.5 font-medium',
-                                row.status === 'paid' ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'
-                              )}
+                  <div className="mt-4 w-full overflow-x-auto border-t border-gray-100 pt-4">
+                    <table className="w-full min-w-[700px] border-collapse text-sm">
+                      <thead>
+                        <tr className="border-b border-gray-100 bg-gray-50/50 text-xs font-semibold text-gray-500">
+                          <th scope="col" className="px-4 py-4 text-center">
+                            {t('الحالة', 'Status')}
+                          </th>
+                          <th scope="col" className="px-4 py-4 text-start">
+                            {t('الاسم', 'Name')}
+                          </th>
+                          <th scope="col" className="px-4 py-4 text-center">
+                            {t('التاريخ', 'Date')}
+                          </th>
+                          <th scope="col" className="px-4 py-4 text-center">
+                            {t('المبلغ', 'Amount')}
+                          </th>
+                          <th scope="col" className="px-4 py-4 text-center">
+                            {t('الإجراءات', 'Actions')}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {outflows.map((row) => {
+                          const isPaid = row.status === 'paid'
+                          const name = locale === 'ar' ? row.name_ar || row.name_en : row.name_en || row.name_ar
+                          return (
+                            <tr
+                              key={row.id}
+                              className="border-b border-gray-50 transition-colors hover:bg-gray-50/50"
                             >
-                              {row.status === 'paid' ? t('مدفوع', 'Paid') : t('معلق', 'Pending')}
-                            </span>
-                            <span dir="ltr" className="tabular-nums">
-                              {formatGregorianDate(parseLocalISODate(row.date), locale)}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <p className="text-lg font-bold text-danger tabular-nums" dir="ltr">
-                            {formatMoney(Number(row.amount), locale)}
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => openEditGeneral(row)}
-                            className="rounded-lg p-2 text-muted hover:bg-surface hover:text-brand"
-                            aria-label={t('تعديل', 'Edit')}
-                          >
-                            <Pencil size={18} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => deleteGeneral(row.id)}
-                            disabled={deletingId === row.id}
-                            className="rounded-lg p-2 text-muted hover:bg-red-50 hover:text-danger disabled:opacity-50"
-                            aria-label={t('حذف', 'Delete')}
-                          >
-                            {deletingId === row.id ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                              <td className="whitespace-nowrap px-4 py-4 text-center">
+                                <span
+                                  className={cn(
+                                    'inline-flex rounded-md px-2.5 py-1 text-xs font-bold',
+                                    isPaid ? 'bg-emerald-50 text-emerald-800' : 'bg-amber-50 text-amber-900'
+                                  )}
+                                >
+                                  {isPaid ? t('مدفوع', 'Paid') : t('معلق', 'Pending')}
+                                </span>
+                              </td>
+
+                              <td className="whitespace-nowrap px-4 py-4 text-start font-bold text-gray-900">
+                                {name || t('بدون اسم', 'Unnamed')}
+                              </td>
+
+                              <td className="whitespace-nowrap px-4 py-4 text-center text-gray-500" dir="ltr">
+                                {row.date ? formatGregorianDate(parseLocalISODate(row.date), locale) : '-'}
+                              </td>
+
+                              <td
+                                className="whitespace-nowrap px-4 py-4 text-center font-bold text-rose-600"
+                                dir="ltr"
+                              >
+                                {formatMoney(Number(row.amount), locale)}
+                              </td>
+
+                              <td className="whitespace-nowrap px-4 py-4 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => openEditGeneral(row)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-blue-600 transition-colors hover:bg-blue-50"
+                                    title={t('تعديل', 'Edit')}
+                                    aria-label={t('تعديل', 'Edit')}
+                                  >
+                                    <Pencil size={16} />
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteGeneral(row.id)}
+                                    disabled={deletingId === row.id}
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+                                    title={t('حذف', 'Delete')}
+                                    aria-label={t('حذف', 'Delete')}
+                                  >
+                                    {deletingId === row.id ? (
+                                      <Loader2 size={16} className="animate-spin" />
+                                    ) : (
+                                      <Trash2 size={16} />
+                                    )}
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                 )}
               </div>
             </div>
