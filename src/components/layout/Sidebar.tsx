@@ -74,9 +74,6 @@ function SidebarContent({
                 <p className="text-sm font-extrabold tracking-tight text-slate-900">
                   {t('التنبيهات', 'Notifications')}
                 </p>
-                <p className="mt-0.5 text-[11px] font-medium leading-snug text-slate-500">
-                  {t('مواعيد الالتزامات والمتابعة', 'Obligation due dates & follow-up')}
-                </p>
               </div>
             }
           />
