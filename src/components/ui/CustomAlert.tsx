@@ -38,7 +38,7 @@ export function CustomAlert({
             {type === 'confirm' ? (
               <WarningCircle weight="fill" className="h-5 w-5 text-white" aria-hidden />
             ) : (
-              <span className="text-xl font-black text-white">P</span>
+              <span className="text-sm font-black tracking-tight text-white">Pl</span>
             )}
           </div>
 

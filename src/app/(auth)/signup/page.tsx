@@ -76,8 +76,8 @@ export default function SignupPage() {
               </h2>
               <p className="text-slate-600">
                 {t(
-                  'لقد أرسلنا رابط التفعيل إلى بريدك الإلكتروني. يرجى الضغط على الرابط لتفعيل حسابك والبدء باستخدام بلانورا.',
-                  'We sent an activation link to your email. Please open it to activate your account and start using Planora.'
+                  'لقد أرسلنا رابط التفعيل إلى بريدك الإلكتروني. يرجى الضغط على الرابط لتفعيل حسابك والبدء باستخدام بلينفو.',
+                  'We sent an activation link to your email. Please open it to activate your account and start using Plenvo.'
                 )}
               </p>
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-600">
@@ -100,7 +100,7 @@ export default function SignupPage() {
                 {t('إنشاء حساب جديد', 'Create Account')}
               </h1>
               <p className="text-muted text-center text-sm mb-8">
-                {t('ابدأ رحلتك المالية مع بلانورا', 'Start your financial journey with Planora')}
+                {t('ابدأ رحلتك المالية مع بلينفو', 'Start your financial journey with Plenvo')}
               </p>
 
               <form onSubmit={handleSubmit} className="space-y-4">

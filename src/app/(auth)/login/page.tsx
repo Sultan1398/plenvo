@@ -94,7 +94,7 @@ function LoginPageContent() {
 
         <div className="bg-white rounded-2xl shadow-sm border border-border p-8">
           <h1 className="text-2xl font-bold text-center mb-1">
-            {t('مرحباً بك في بلانورا', 'Welcome to Planora')}
+            {t('مرحباً بك في بلينفو', 'Welcome to Plenvo')}
           </h1>
           <p className="text-muted text-center text-sm mb-8">
             {t('سجّل دخولك لمتابعة أموالك', 'Sign in to manage your finances')}

@@ -52,10 +52,10 @@ export function Footer() {
         >
           {/* العمود 1: العلامة */}
           <div className="space-y-4">
-            <Link href="/" className="inline-flex items-center gap-3" aria-label={t('بلانورا — الرئيسية', 'Planora — Home')}>
+            <Link href="/" className="inline-flex items-center gap-3" aria-label={t('بلينفو — الرئيسية', 'Plenvo — Home')}>
               <span className="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white shadow-md shadow-brand/10 ring-1 ring-slate-200/80">
                 <Image
-                  src="/brand/Planora-logo.svg"
+                  src="/brand/Plenvo-logo.svg"
                   alt=""
                   width={256}
                   height={256}
@@ -70,7 +70,7 @@ export function Footer() {
                   locale === 'en' && 'tracking-tight'
                 )}
               >
-                {t('بلانورا', 'Planora')}
+                {t('بلينفو', 'Plenvo')}
               </span>
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-slate-600">
@@ -106,7 +106,7 @@ export function Footer() {
             <FooterHeading>{t('التطبيق', 'App')}</FooterHeading>
             <ul className="space-y-3">
               <li>
-                <FooterLink href="/how-it-works">{t('كيف يعمل بلانورا؟', 'How Planura Works?')}</FooterLink>
+                <FooterLink href="/how-it-works">{t('كيف يعمل بلينفو؟', 'How Plenvo Works?')}</FooterLink>
               </li>
               <li>
                 <FooterLink href="/#features">{t('المميزات', 'Features')}</FooterLink>
@@ -122,7 +122,7 @@ export function Footer() {
             <FooterHeading>{t('الموارد', 'Resources')}</FooterHeading>
             <ul className="space-y-3">
               <li>
-                <FooterLink href="mailto:customerservice@planora.app" external>
+                <FooterLink href="mailto:support@plenvoapp.com" external>
                   {t('تواصل معنا', 'Contact us')}
                 </FooterLink>
               </li>
@@ -145,7 +145,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-slate-200 pt-8 text-center">
           <p className="text-sm text-slate-500">
-            {t('© 2026 بلانورا. جميع الحقوق محفوظة.', '© 2026 Planora. All rights reserved.')}
+            {t('© 2026 بلينفو. جميع الحقوق محفوظة.', '© 2026 Plenvo. All rights reserved.')}
           </p>
         </div>
       </div>

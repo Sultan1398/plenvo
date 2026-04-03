@@ -74,7 +74,7 @@ export default function LandingPage() {
               aria-hidden
             >
               <Image
-                src="/brand/Planora-logo.svg"
+                src="/brand/Plenvo-logo.svg"
                 alt=""
                 width={512}
                 height={512}
@@ -86,8 +86,8 @@ export default function LandingPage() {
             </span>
             <h1 className="max-w-3xl text-center text-3xl font-extrabold leading-tight sm:text-start sm:text-4xl md:text-5xl lg:text-6xl">
               {t(
-                'تحكم في مستقبلك المالي بذكاء مع بلانورا',
-                'Take control of your financial future with Planora'
+                'تحكم في مستقبلك المالي بذكاء مع بلينفو',
+                'Take control of your financial future with Plenvo'
               )}
             </h1>
           </div>

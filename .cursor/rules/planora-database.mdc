@@ -1,5 +1,5 @@
 ---
-description: Supabase database schema and query patterns for Planora
+description: Supabase database schema and query patterns for Plenvo
 globs: src/**/*.ts
 alwaysApply: false
 ---

@@ -43,14 +43,14 @@ interface Content {
 
 const content: Content = {
   ar: {
-    pageTitle: 'كيف يعمل بلانورا؟',
+    pageTitle: 'كيف يعمل بلينفو؟',
     goal: {
-      heading: 'الهدف من بلانورا',
-      text: 'لا يكتفي بلانورا بكونه أداةً لتسجيل عملياتك المالية، بل يذهب أبعد من ذلك. فلسفة بلانورا تقوم على مبدأ واحد: تبسيط إدارة أموالك حتى تستعيد السيطرة الكاملة عليها. نؤمن بأن الإدارة المالية الجيدة لا تعني تعقيداً أو جداول مرهقة، بل تعني وضوح الرؤية وسهولة التنفيذ — وهذا بالضبط ما يقدمه بلانورا.',
+      heading: 'الهدف من بلينفو',
+      text: 'لا يكتفي بلينفو بكونه أداةً لتسجيل عملياتك المالية، بل يذهب أبعد من ذلك. فلسفة بلينفو تقوم على مبدأ واحد: تبسيط إدارة أموالك حتى تستعيد السيطرة الكاملة عليها. نؤمن بأن الإدارة المالية الجيدة لا تعني تعقيداً أو جداول مرهقة، بل تعني وضوح الرؤية وسهولة التنفيذ — وهذا بالضبط ما يقدمه بلينفو.',
     },
     periods: {
       heading: 'الفترات المالية',
-      text: "يرتكز بلانورا على مفهوم محوري يُميّزه: 'الفترات المالية'. وهي دورات زمنية منتظمة — شهرية في الغالب — تُشكّل الإطار الزمني لتنظيم جميع معاملاتك المالية وتتبعها.",
+      text: "يرتكز بلينفو على مفهوم محوري يُميّزه: 'الفترات المالية'. وهي دورات زمنية منتظمة — شهرية في الغالب — تُشكّل الإطار الزمني لتنظيم جميع معاملاتك المالية وتتبعها.",
       whyHeading: 'لماذا الفترات المالية؟',
       whyBullets: [
         'ربط كل معاملة مالية بسياقها الزمني الصحيح.',
@@ -60,16 +60,16 @@ const content: Content = {
       ],
       setupHeading: 'كيفية إعداد الفترات المالية',
       setupText:
-        'من قسم الإعدادات، يمكنك تحديد يوم وشهر بداية فترتك المالية الأولى. ويُنصح باختيار تاريخ استلام راتبك الشهري إن كان ثابتاً — إذ يُمثّل هذا التاريخ بداية دورة مالية منطقية وطبيعية لك. وبمجرد تحديد هذا التاريخ، يُعيد بلانورا جدولة نفسه تلقائياً ليبدأ كل فترة في اليوم ذاته من كل شهر.',
+        'من قسم الإعدادات، يمكنك تحديد يوم وشهر بداية فترتك المالية الأولى. ويُنصح باختيار تاريخ استلام راتبك الشهري إن كان ثابتاً — إذ يُمثّل هذا التاريخ بداية دورة مالية منطقية وطبيعية لك. وبمجرد تحديد هذا التاريخ، يُعيد بلينفو جدولة نفسه تلقائياً ليبدأ كل فترة في اليوم ذاته من كل شهر.',
     },
     modulesSection: {
       heading: 'أقسام التطبيق',
-      intro: 'يتكون بلانورا من ستة أقسام رئيسية، كل منها مصمَّم بعناية لتغطية جانب محدد من حياتك المالية:',
+      intro: 'يتكون بلينفو من ستة أقسام رئيسية، كل منها مصمَّم بعناية لتغطية جانب محدد من حياتك المالية:',
       items: [
         {
           icon: '💼',
           title: '١ — المحفظة',
-          desc: 'تُمثّل المحفظة مركز القيادة في بلانورا، وتنقسم إلى ثلاثة تبويبات متكاملة:',
+          desc: 'تُمثّل المحفظة مركز القيادة في بلينفو، وتنقسم إلى ثلاثة تبويبات متكاملة:',
           details: [
             {
               subtitle: 'النظرة العامة:',
@@ -88,7 +88,7 @@ const content: Content = {
         {
           icon: '📥',
           title: '٢ — الدخل',
-          desc: 'يُبسّط بلانورا عملية تسجيل إيراداتك من خلال نهج قائم على الوضوح:',
+          desc: 'يُبسّط بلينفو عملية تسجيل إيراداتك من خلال نهج قائم على الوضوح:',
           details: [
             {
               subtitle: 'الدخل الثابت:',
@@ -133,7 +133,7 @@ const content: Content = {
           details: [
             {
               subtitle: 'تسجيل الصفقات:',
-              text: 'يُسجّل المستخدم قيمة فتح وإغلاق الصفقة، ويتولى بلانورا تلقائياً حساب الربح أو الخسارة المحققة.',
+              text: 'يُسجّل المستخدم قيمة فتح وإغلاق الصفقة، ويتولى بلينفو تلقائياً حساب الربح أو الخسارة المحققة.',
             },
           ],
         },
@@ -152,14 +152,14 @@ const content: Content = {
     },
   },
   en: {
-    pageTitle: 'How Planura Works?',
+    pageTitle: 'How Plenvo Works?',
     goal: {
-      heading: 'The Goal of Planura',
-      text: 'Planura is not just a tool for recording your financial transactions; it goes much further. The philosophy of Planura is based on a single principle: simplifying the management of your money so you can regain full control over it. We believe that good financial management does not mean complexity or cumbersome spreadsheets, but rather clarity of vision and ease of execution—and this is exactly what Planura offers.',
+      heading: 'The Goal of Plenvo',
+      text: 'Plenvo is not just a tool for recording your financial transactions; it goes much further. The philosophy of Plenvo is based on a single principle: simplifying the management of your money so you can regain full control over it. We believe that good financial management does not mean complexity or cumbersome spreadsheets, but rather clarity of vision and ease of execution—and this is exactly what Plenvo offers.',
     },
     periods: {
       heading: 'Financial Periods',
-      text: "Planura is anchored by a core concept that sets it apart: 'Financial Periods'. These are regular time cycles—mostly monthly—that form the timeframe for organizing and tracking all your financial transactions.",
+      text: "Plenvo is anchored by a core concept that sets it apart: 'Financial Periods'. These are regular time cycles—mostly monthly—that form the timeframe for organizing and tracking all your financial transactions.",
       whyHeading: 'Why Financial Periods?',
       whyBullets: [
         'Connect each transaction to its correct chronological context.',
@@ -169,16 +169,16 @@ const content: Content = {
       ],
       setupHeading: 'How to set up Financial Periods',
       setupText:
-        "From settings, select the day and month your first period begins. It's recommended to choose your fixed salary date—representing a natural financial cycle. Once set, Planura automatically reschedules to start each period on the exact same day every month.",
+        "From settings, select the day and month your first period begins. It's recommended to choose your fixed salary date—representing a natural financial cycle. Once set, Plenvo automatically reschedules to start each period on the exact same day every month.",
     },
     modulesSection: {
       heading: 'App Sections',
-      intro: 'Planura consists of six main sections, each carefully designed to cover a specific aspect of your financial life:',
+      intro: 'Plenvo consists of six main sections, each carefully designed to cover a specific aspect of your financial life:',
       items: [
         {
           icon: '💼',
           title: '1 — Portfolio',
-          desc: 'The command center of Planura, divided into three integrated tabs:',
+          desc: 'The command center of Plenvo, divided into three integrated tabs:',
           details: [
             { subtitle: 'Overview:', text: 'An instant real-time glimpse of your overall finances.' },
             { subtitle: 'Analysis:', text: 'Charts and indicators that illuminate your financial status for better planning.' },
@@ -236,7 +236,7 @@ const content: Content = {
           details: [
             {
               subtitle: 'Trade Recording:',
-              text: 'Enter the open and close values, and Planura auto-calculates your profit or loss.',
+              text: 'Enter the open and close values, and Plenvo auto-calculates your profit or loss.',
             },
           ],
         },

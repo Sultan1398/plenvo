@@ -57,8 +57,8 @@ export function Logo({ size = 'md', showName = true, className }: LogoProps) {
         style={{ width: cfg.img, height: cfg.img }}
       >
         <Image
-          src="/brand/Planora-logo.svg"
-          alt={locale === 'ar' ? 'شعار بلانورا' : 'Planora logo'}
+          src="/brand/Plenvo-logo.svg"
+          alt={locale === 'ar' ? 'شعار بلينفو' : 'Plenvo logo'}
           width={cfg.img}
           height={cfg.img}
           className="h-full w-full object-contain p-[6%]"
@@ -74,7 +74,7 @@ export function Logo({ size = 'md', showName = true, className }: LogoProps) {
             locale === 'en' && 'tracking-tight'
           )}
         >
-          {locale === 'ar' ? 'بلانورا' : 'Planora'}
+          {locale === 'ar' ? 'بلينفو' : 'Plenvo'}
         </span>
       )}
     </div>

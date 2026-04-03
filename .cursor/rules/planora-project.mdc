@@ -1,9 +1,9 @@
 ---
-description: Planora project overview, architecture, and core conventions
+description: Plenvo project overview, architecture, and core conventions
 alwaysApply: true
 ---
 
-# Planora — Personal Finance Flow App
+# Plenvo — Personal Finance Flow App
 
 ## Project Summary
 Bilingual (Arabic RTL / English LTR) personal finance web app. Users track income, expenses, obligations, growth (savings goals, deposits, fixed assets), and investments across **dynamic financial periods** tied to their salary cycle.

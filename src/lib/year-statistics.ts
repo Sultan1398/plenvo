@@ -66,7 +66,7 @@ export async function fetchYearStatisticsRows(
     supabase
       .from('outflows')
       // لا نطلب obligation_id — قد يكون العمود غير موجود إن لم تُطبَّق هجرة 002؛
-      // التصنيف يعتمد على name_ar/name_en وعلامة [[planora-obl:uuid]] عند الحاجة.
+      // التصنيف يعتمد على name_ar/name_en وعلامة [[plenvo-obl:uuid]] أو [[planora-obl:uuid]] عند الحاجة.
       .select('amount, status, date, name_ar, name_en')
       .eq('user_id', userId)
       .gte('date', rangeStart)

@@ -1,4 +1,4 @@
-# Planora — Personal Finance Flow App
+# Plenvo — Personal Finance Flow App
 
 تطبيق ويب لإدارة الأموال الشخصية بدعم كامل للعربية (RTL) والإنجليزية (LTR).
 

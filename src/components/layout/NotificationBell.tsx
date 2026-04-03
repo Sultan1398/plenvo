@@ -11,7 +11,8 @@ import type { Obligation } from '@/types/database'
 import { AlertTriangle, Bell, Inbox, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const DISMISSED_KEY = 'planora:dismissedNotifications'
+const DISMISSED_KEY = 'plenvo:dismissedNotifications'
+const LEGACY_DISMISSED_KEY = 'planora:dismissedNotifications'
 
 type NotificationItem = {
   id: string
@@ -28,7 +29,7 @@ type NotificationBellProps = {
 
 function readDismissedSet(): Set<string> {
   try {
-    const raw = localStorage.getItem(DISMISSED_KEY)
+    const raw = localStorage.getItem(DISMISSED_KEY) ?? localStorage.getItem(LEGACY_DISMISSED_KEY)
     if (!raw) return new Set()
     const arr = JSON.parse(raw) as string[]
     if (!Array.isArray(arr)) return new Set()

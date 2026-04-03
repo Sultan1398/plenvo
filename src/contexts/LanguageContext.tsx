@@ -17,14 +17,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>('ar')
 
   useEffect(() => {
-    const saved = localStorage.getItem('planora-locale') as Locale | null
+    const saved =
+      (localStorage.getItem('plenvo-locale') as Locale | null) ??
+      (localStorage.getItem('planora-locale') as Locale | null)
     if (saved === 'ar' || saved === 'en') setLocale(saved)
   }, [])
 
   useEffect(() => {
     document.documentElement.lang = locale
     document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr'
-    localStorage.setItem('planora-locale', locale)
+    localStorage.setItem('plenvo-locale', locale)
   }, [locale])
 
   const toggleLocale = () => setLocale((prev) => (prev === 'ar' ? 'en' : 'ar'))

@@ -8,17 +8,17 @@ import { cn } from '@/lib/utils'
 
 const content = {
   ar: {
-    title: "سياسة الخصوصية لتطبيق بلانورا (Planura)",
+    title: "سياسة الخصوصية لتطبيق بلينفو (Plenvo)",
     lastUpdated: "تاريخ آخر تحديث: مارس 2026",
     intro:
-      "نرحب بك في 'بلانورا'. نحن ندرك تماماً أن بياناتك المالية هي من أشد أسرارك خصوصية. لذلك، بنينا هذا التطبيق على مبدأ أساسي: بياناتك ملك لك وحدك، ومهمتنا هي حمايتها ومساعدتك على إدارتها، وليس استغلالها.",
+      "نرحب بك في 'بلينفو'. نحن ندرك تماماً أن بياناتك المالية هي من أشد أسرارك خصوصية. لذلك، بنينا هذا التطبيق على مبدأ أساسي: بياناتك ملك لك وحدك، ومهمتنا هي حمايتها ومساعدتك على إدارتها، وليس استغلالها.",
     sections: [
       {
         title: "1. ما هي المعلومات التي نجمعها؟",
         text: "لتقديم أفضل تجربة مالية لك، نقوم بجمع نوعين من المعلومات:",
         points: [
           "معلومات الحساب الأساسية: عند التسجيل، نطلب بريدك الإلكتروني لإنشاء حسابك وتأمين وصولك.",
-          "البيانات المالية المُدخلة (بإرادتك): تشمل الأرقام التي تقوم بإدخالها يدوياً. ملاحظة هامة: بلانورا لا يطلب ولا يربط أو يخزن أي أرقام بطاقات ائتمانية أو بيانات تسجيل دخول لحساباتك البنكية الفعلية.",
+          "البيانات المالية المُدخلة (بإرادتك): تشمل الأرقام التي تقوم بإدخالها يدوياً. ملاحظة هامة: بلينفو لا يطلب ولا يربط أو يخزن أي أرقام بطاقات ائتمانية أو بيانات تسجيل دخول لحساباتك البنكية الفعلية.",
           "البيانات التقنية: مثل نوع الجهاز ونظام التشغيل لتحسين أداء التطبيق.",
         ],
       },
@@ -60,23 +60,23 @@ const content = {
       {
         title: "6. تواصل معنا",
         text: "إذا كانت لديك أي أسئلة بشأن خصوصية بياناتك، يرجى التواصل معنا عبر البريد الإلكتروني:",
-        points: ["customerservice@planora.app"],
+        points: ["support@plenvoapp.com"],
       },
     ],
     backButton: "العودة للرئيسية",
   },
   en: {
-    title: "Privacy Policy for Planura App",
+    title: "Privacy Policy for Plenvo",
     lastUpdated: "Last Updated: March 2026",
     intro:
-      "Welcome to Planura. We fully understand that your financial data is among your most private secrets. Therefore, we built this app on a fundamental principle: your data belongs to you alone, and our mission is to protect it and help you manage it, not exploit it.",
+      "Welcome to Plenvo. We fully understand that your financial data is among your most private secrets. Therefore, we built this app on a fundamental principle: your data belongs to you alone, and our mission is to protect it and help you manage it, not exploit it.",
     sections: [
       {
         title: "1. What information do we collect?",
         text: "To provide you with the best financial experience, we collect two types of information:",
         points: [
           "Basic Account Information: Upon registration, we ask for your email to create your account and secure your access.",
-          "Voluntarily Entered Financial Data: Includes the numbers you enter manually. Important note: Planura does not request, link, or store any credit card numbers or login details for your actual bank accounts.",
+          "Voluntarily Entered Financial Data: Includes the numbers you enter manually. Important note: Plenvo does not request, link, or store any credit card numbers or login details for your actual bank accounts.",
           "Technical Data: Such as device type and operating system to improve app performance.",
         ],
       },
@@ -118,7 +118,7 @@ const content = {
       {
         title: "6. Contact Us",
         text: "If you have any questions regarding your data privacy, please contact us via email:",
-        points: ["customerservice@planora.app"],
+        points: ["support@plenvoapp.com"],
       },
     ],
     backButton: "Back to Home",

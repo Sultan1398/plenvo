@@ -53,7 +53,7 @@ export function Navbar() {
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 sm:gap-3"
-          aria-label={t('بلانورا — الصفحة الرئيسية', 'Planora — Home')}
+          aria-label={t('بلينفو — الصفحة الرئيسية', 'Plenvo — Home')}
         >
           <span
             className={cn(
@@ -62,7 +62,7 @@ export function Navbar() {
             )}
           >
             <Image
-              src="/brand/Planora-logo.svg"
+              src="/brand/Plenvo-logo.svg"
               alt=""
               width={256}
               height={256}
@@ -78,7 +78,7 @@ export function Navbar() {
               locale === 'en' && 'tracking-tight'
             )}
           >
-            {t('بلانورا', 'Planora')}
+            {t('بلينفو', 'Plenvo')}
           </span>
         </Link>
 
@@ -90,9 +90,9 @@ export function Navbar() {
           )}
         >
           <div className="flex shrink-0 items-center gap-4 sm:gap-6 lg:gap-8">
-            <NavTextLink href="/how-it-works">{t('كيف يعمل بلانورا؟', 'How Planura Works?')}</NavTextLink>
-            <NavTextLink href="/#features">{t('أقسام بلانورا', 'Planora sections')}</NavTextLink>
-            <NavTextLink href="mailto:customerservice@planora.app" external>
+            <NavTextLink href="/how-it-works">{t('كيف يعمل بلينفو؟', 'How Plenvo Works?')}</NavTextLink>
+            <NavTextLink href="/#features">{t('أقسام بلينفو', 'Plenvo sections')}</NavTextLink>
+            <NavTextLink href="mailto:support@plenvoapp.com" external>
               {t('تواصل معنا', 'Contact us')}
             </NavTextLink>
           </div>

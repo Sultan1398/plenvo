@@ -1,5 +1,5 @@
 -- ============================================================
--- Planora — Initial Database Schema
+-- Plenvo — Initial Database Schema
 -- ============================================================
 
 -- Enable UUID extension

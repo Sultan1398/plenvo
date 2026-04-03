@@ -32,7 +32,7 @@ export default async function AdminPage() {
     <div className="space-y-6">
       <header className="rounded-2xl border border-slate-200/90 bg-gradient-to-l from-brand/[0.08] via-white to-white px-6 py-5 shadow-sm ring-1 ring-slate-900/[0.04] sm:px-8">
         <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-          لوحة تحكم الإدارة — بلانورا
+          لوحة تحكم الإدارة — بلينفو
         </h1>
         <p className="mt-1 text-sm text-muted sm:text-base">
           إدارة المستخدمين، الإحصاءات، ومراقبة النظام. البيانات تُجلب على الخادم فقط عبر مفتاح الخدمة.

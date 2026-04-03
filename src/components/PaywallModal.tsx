@@ -47,8 +47,8 @@ export function PaywallModal({ subscriptionStatus }: PaywallModalProps) {
         </h2>
         <p className="mt-4 text-sm leading-relaxed text-slate-600 sm:text-base">
           {t(
-            'لترقية حسابك إلى (بلانورا برو) واستعادة الوصول لبياناتك، يرجى إتمام عملية الاشتراك عبر تطبيقنا على الجوال.',
-            'To upgrade to Planora Pro and restore access to your data, please complete your subscription using our mobile app.'
+            'لترقية حسابك إلى (بلينفو برو) واستعادة الوصول لبياناتك، يرجى إتمام عملية الاشتراك عبر تطبيقنا على الجوال.',
+            'To upgrade to Plenvo Pro and restore access to your data, please complete your subscription using our mobile app.'
           )}
         </p>
 

@@ -1,7 +1,10 @@
 /**
  * دعم مخطط 001 (status) ومخطط 002 (paid_amount)
- * + سداد جزئي بدون عمود paid_amount عبر تتبع مصروفات تحمل العلامة [[planora-obl:uuid]]
+ * + سداد جزئي بدون عمود paid_amount عبر تتبع مصروفات تحمل العلامة [[plenvo-obl:uuid]] (أو [[planora-obl:uuid]] للبيانات القديمة)
  */
+
+/** مطابقة معرف الالتزام داخل وصف المصروف — يدعم العلامة القديمة والجديدة */
+export const OBLIGATION_NAME_MARKER_RE = /\[\[(?:planora|plenvo)-obl:([a-f0-9-]{36})\]\]/i
 
 export type ObligationLike = {
   id?: string
@@ -11,24 +14,30 @@ export type ObligationLike = {
   status?: 'paid' | 'pending' | null
 }
 
-export const OBLIGATION_PAY_TAG = (obligationId: string) => `[[planora-obl:${obligationId}]]`
+const LEGACY_PLANORA_OBL_TAG = (obligationId: string) => `[[planora-obl:${obligationId}]]`
+
+/** علامة السداد المضمّنة في وصف المصروف (إصدارات جديدة) */
+export const OBLIGATION_PAY_TAG = (obligationId: string) => `[[plenvo-obl:${obligationId}]]`
 
 /** مجموع مصروفات السداد المرتبطة بالالتزام (مخطط بدون paid_amount) */
 export function sumLegacyMarkerPayments(
   outflows: Array<{ amount: number; name_ar?: string | null; name_en?: string | null }>,
   obligationId: string
 ): number {
-  const tag = OBLIGATION_PAY_TAG(obligationId)
+  const tagNew = OBLIGATION_PAY_TAG(obligationId)
+  const tagOld = LEGACY_PLANORA_OBL_TAG(obligationId)
   let s = 0
   for (const o of outflows) {
     const ar = o.name_ar ?? ''
     const en = o.name_en ?? ''
-    if (ar.includes(tag) || en.includes(tag)) s += Number(o.amount)
+    if (ar.includes(tagNew) || en.includes(tagNew) || ar.includes(tagOld) || en.includes(tagOld)) {
+      s += Number(o.amount)
+    }
   }
   return s
 }
 
-/** مصروف مرتبط بسداد التزام: obligation_id أو علامة [[planora-obl:uuid]] في الاسم */
+/** مصروف مرتبط بسداد التزام: obligation_id أو علامة [[plenvo-obl:uuid]] / [[planora-obl:uuid]] في الاسم */
 export function outflowIsObligationLinkedExpense(row: {
   obligation_id?: string | null
   name_ar?: string | null
@@ -37,7 +46,7 @@ export function outflowIsObligationLinkedExpense(row: {
   const oid = row.obligation_id
   if (oid != null && String(oid).trim() !== '') return true
   const hay = `${row.name_ar ?? ''}\n${row.name_en ?? ''}`
-  return /\[\[planora-obl:[a-f0-9-]{36}\]\]/i.test(hay)
+  return OBLIGATION_NAME_MARKER_RE.test(hay)
 }
 
 function hasPaidAmountKey(row: ObligationLike): boolean {

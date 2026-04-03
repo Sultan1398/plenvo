@@ -76,9 +76,9 @@ export async function submitSupportMessage(input: {
   try {
     await transporter.sendMail({
       from: smtpUser, // يجب أن يكون الإيميل الرسمي
-      to: 'customerservice@planora.app',
+      to: 'support@plenvoapp.com',
       replyTo: email,
-      subject: `[Planora Support] ${email}`,
+      subject: `[Plenvo Support] ${email}`,
       text: `User ID: ${user.id}\nEmail: ${email}\n\n${message}`,
       html: `<p><strong>User ID:</strong> ${escapeHtml(user.id)}</p><p><strong>Email:</strong> ${escapeHtml(
         email

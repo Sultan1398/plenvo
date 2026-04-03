@@ -1,5 +1,5 @@
 ---
-description: Component patterns and data fetching conventions for Planora
+description: Component patterns and data fetching conventions for Plenvo
 globs: src/**/*.tsx
 alwaysApply: false
 ---

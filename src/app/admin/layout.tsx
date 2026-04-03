@@ -26,7 +26,7 @@ export default async function AdminLayout({
         <aside className="hidden w-64 flex-col border-e border-border bg-white p-4 lg:flex">
           <div className="mb-6 rounded-xl border border-brand/20 bg-brand/5 px-4 py-3">
             <p className="text-sm font-semibold text-brand">Admin</p>
-            <p className="text-xs text-muted">Planora Control</p>
+            <p className="text-xs text-muted">Plenvo Control</p>
           </div>
 
           <nav className="space-y-1">

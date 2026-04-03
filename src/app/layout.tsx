@@ -17,8 +17,14 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Planora — Personal Finance Flow',
-  description: 'Track your income, expenses, savings, and investments across dynamic financial periods.',
+  metadataBase: new URL('https://plenvoapp.com'),
+  title: {
+    default: 'Plenvo — Personal Finance Flow',
+    template: '%s — Plenvo',
+  },
+  description:
+    'Track your income, expenses, savings, and investments across dynamic financial periods with Plenvo.',
+  applicationName: 'Plenvo',
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',

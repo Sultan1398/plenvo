@@ -74,7 +74,7 @@ function setupSupabaseMocks(page: Page, getScenario: () => Scenario) {
       contentType: 'application/json',
       body: JSON.stringify({
         id: 'e2e-user',
-        email: 'qa@planora.app',
+        email: 'qa@plenvoapp.com',
         user_metadata: {},
       }),
     })

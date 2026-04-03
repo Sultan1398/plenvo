@@ -8,14 +8,14 @@ import { cn } from '@/lib/utils'
 
 const content = {
   ar: {
-    title: 'شروط استخدام تطبيق بلانورا',
+    title: 'شروط استخدام تطبيق بلينفو',
     lastUpdated: 'تاريخ آخر تحديث: مارس 2026',
     intro:
-      'باستخدامك لبلانورا، فإنك توافق على هذه الشروط. يُرجى قراءتها بعناية. إذا لم توافق على أي بند، يُفضّل عدم استخدام الخدمة.',
+      'باستخدامك لبلينفو، فإنك توافق على هذه الشروط. يُرجى قراءتها بعناية. إذا لم توافق على أي بند، يُفضّل عدم استخدام الخدمة.',
     sections: [
       {
         title: '1. الخدمة والترخيص',
-        text: 'بلانورا أداة لتنظيم ومتابعة وضعك المالي الشخصي. نمنحك ترخيصاً شخصياً غير حصري وغير قابل للتحويل لاستخدام التطبيق وفق هذه الشروط.',
+        text: 'بلينفو أداة لتنظيم ومتابعة وضعك المالي الشخصي. نمنحك ترخيصاً شخصياً غير حصري وغير قابل للتحويل لاستخدام التطبيق وفق هذه الشروط.',
         points: [
           'يجب أن تكون قادراً قانونياً على إبرام عقد ملزم في بلد إقامتك.',
           'أنت مسؤول عن سرية بيانات الدخول إلى حسابك.',
@@ -39,7 +39,7 @@ const content = {
       },
       {
         title: '4. إخلاء المسؤولية',
-        text: 'بلانورا أداة تخطيط ومعلومات؛ لا تُعد استشارة مالية أو ضريبية أو استثمارية. القرارات المالية قراراتك وحدك.',
+        text: 'بلينفو أداة تخطيط ومعلومات؛ لا تُعد استشارة مالية أو ضريبية أو استثمارية. القرارات المالية قراراتك وحدك.',
         points: [
           'نُقدّم الخدمة «كما هي» ضمن حدود معقولة دون ضمانات صريحة أو ضمنية.',
           'لا نتحمل المسؤولية عن أي خسارة ناتجة عن اعتمادك على المعلومات داخل التطبيق.',
@@ -53,20 +53,20 @@ const content = {
       {
         title: '6. التواصل',
         text: 'للاستفسارات حول هذه الشروط:',
-        points: ['customerservice@planora.app'],
+        points: ['support@plenvoapp.com'],
       },
     ],
     backButton: 'العودة للرئيسية',
   },
   en: {
-    title: 'Terms of Use for Planora',
+    title: 'Terms of Use for Plenvo',
     lastUpdated: 'Last Updated: March 2026',
     intro:
-      'By using Planora, you agree to these terms. Please read them carefully. If you do not agree, please do not use the service.',
+      'By using Plenvo, you agree to these terms. Please read them carefully. If you do not agree, please do not use the service.',
     sections: [
       {
         title: '1. Service and license',
-        text: 'Planora is a tool to organize and track your personal finances. We grant you a personal, non-exclusive, non-transferable license to use the app subject to these terms.',
+        text: 'Plenvo is a tool to organize and track your personal finances. We grant you a personal, non-exclusive, non-transferable license to use the app subject to these terms.',
         points: [
           'You must be legally able to enter a binding contract in your country of residence.',
           'You are responsible for keeping your account credentials confidential.',
@@ -90,7 +90,7 @@ const content = {
       },
       {
         title: '4. Disclaimer',
-        text: 'Planora is a planning and information tool; it is not financial, tax, or investment advice. Financial decisions are solely yours.',
+        text: 'Plenvo is a planning and information tool; it is not financial, tax, or investment advice. Financial decisions are solely yours.',
         points: [
           'We provide the service “as is” to a reasonable extent without express or implied warranties.',
           'We are not liable for losses arising from your reliance on information in the app.',
@@ -104,7 +104,7 @@ const content = {
       {
         title: '6. Contact',
         text: 'Questions about these terms:',
-        points: ['customerservice@planora.app'],
+        points: ['support@plenvoapp.com'],
       },
     ],
     backButton: 'Back to Home',

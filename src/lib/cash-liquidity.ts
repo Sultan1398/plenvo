@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { OBLIGATION_NAME_MARKER_RE } from '@/lib/obligation-helpers'
 
 type Supabase = ReturnType<typeof createClient>
 
@@ -9,7 +10,7 @@ function resolveObligationIdFromOutflow(row: {
 }): string | null {
   if (row.obligation_id) return row.obligation_id
   const hay = `${row.name_ar ?? ''}\n${row.name_en ?? ''}`
-  const match = hay.match(/\[\[planora-obl:([a-f0-9-]{36})\]\]/i)
+  const match = hay.match(OBLIGATION_NAME_MARKER_RE)
   return match?.[1] ?? null
 }
 
