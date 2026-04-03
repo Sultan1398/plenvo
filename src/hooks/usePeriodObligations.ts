@@ -141,8 +141,16 @@ export function usePeriodObligations({
       if (row.date > periodEnd) continue
 
       const lifetimeTotal = Number(row.amount) || 0
-      const paidBefore = paymentsBeforeByObligation.get(row.id) ?? 0
-      const paidNow = paymentsInPeriodByObligation.get(row.id) ?? 0
+      // نستخدم paid_amount كمرجع تصحيحي عند تعديل قيمة المدفوعات يدوياً.
+      // إذا كانت paid_amount أقل من مجموع المدفوعات المسجلة في outflows، سنقصّ المدفوعات في الحسابات
+      // كي ينعكس تعديل المستخدم مباشرة على Remaining.
+      const paidTotal = Number(row.paid_amount) || 0
+
+      const paidBeforeRaw = paymentsBeforeByObligation.get(row.id) ?? 0
+      const paidBefore = Math.min(paidBeforeRaw, paidTotal)
+
+      const paidNowRaw = paymentsInPeriodByObligation.get(row.id) ?? 0
+      const paidNow = Math.min(paidNowRaw, Math.max(0, paidTotal - paidBefore))
 
       const isCarryover = row.date < periodStart
       const openingRemaining = Math.max(0, lifetimeTotal - paidBefore)

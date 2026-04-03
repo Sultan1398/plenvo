@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 type Props = {
   open: boolean
   onClose: () => void
-  onSaved: () => void
+  onSaved: () => void | Promise<void>
   edit: Obligation | null
   periodStart: Date
   periodEnd: Date
@@ -130,7 +130,7 @@ export function ObligationFormModal({
         }
       }
 
-      onSaved()
+      await onSaved()
       onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
