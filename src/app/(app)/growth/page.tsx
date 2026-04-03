@@ -346,107 +346,156 @@ export default function GrowthPage() {
                 const pct = target > 0 ? Math.min(100, (cur / target) * 100) : 0
                 const startD = g.start_date ?? g.created_at.slice(0, 10)
                 const endD = g.target_date
+                const remaining = Math.max(0, target - cur)
+                const goalName = locale === 'ar' ? g.name_ar : g.name_en
                 return (
                   <li
                     key={g.id}
-                    className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-5"
+                    className="overflow-hidden rounded-2xl border border-[#E5E7EB] bg-white shadow-sm transition-shadow hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-3 border-b border-[#E5E7EB] pb-3 sm:flex-row sm:items-start sm:justify-between">
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-base font-bold text-[#1F2937]">
-                          {locale === 'ar' ? g.name_ar : g.name_en}
-                        </h3>
-                        <p className="mt-1 text-xs leading-relaxed text-[#6B7280]">
-                          {t('البداية:', 'Start:')}{' '}
-                          <span dir="ltr" className="tabular-nums">
-                            {formatGregorianDate(parseLocalISODate(startD), locale)}
-                          </span>
-                          {' · '}
-                          {t('الإغلاق:', 'Close:')}{' '}
-                          <span dir="ltr" className="tabular-nums">
-                            {endD ? formatGregorianDate(parseLocalISODate(endD), locale) : '—'}
-                          </span>
-                        </p>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-1.5 sm:justify-end">
-                        <button
-                          type="button"
-                          onClick={() => openDeposit(g)}
-                          className="inline-flex items-center gap-1 rounded-lg bg-[#10B981]/15 px-2.5 py-1.5 text-xs font-bold text-[#059669] hover:bg-[#10B981]/25"
-                        >
-                          <ArrowDownLeft className="h-3.5 w-3.5" aria-hidden />
-                          {t('إيداع', 'Deposit')}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openWithdraw(g)}
-                          disabled={cur <= 0.0001}
-                          className="inline-flex items-center gap-1 rounded-lg border border-[#E5E7EB] bg-white px-2.5 py-1.5 text-xs font-bold text-[#374151] hover:bg-white disabled:opacity-40"
-                        >
-                          <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
-                          {t('سحب', 'Withdraw')}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => openEditGoal(g)}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-white hover:text-[#2563EB]"
-                          aria-label={t('تعديل', 'Edit')}
-                        >
-                          <Pencil className="h-[18px] w-[18px]" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(g)}
-                          disabled={deletingId === g.id}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-[#6B7280] hover:bg-red-50 hover:text-[#EF4444] disabled:opacity-50"
-                          aria-label={t('حذف', 'Delete')}
-                        >
-                          {deletingId === g.id ? (
-                            <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                          ) : (
-                            <Trash2 className="h-[18px] w-[18px]" />
-                          )}
-                        </button>
-                      </div>
+                    {/* القسم العلوي: صف بيانات بجدول 7 أعمدة */}
+                    <div className="overflow-x-auto border-b border-gray-100">
+                      <table className="w-full min-w-[920px] border-collapse text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100 bg-gray-50/80 text-xs font-semibold text-gray-500">
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-start sm:px-4">
+                              {t('الاسم', 'Name')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('البداية', 'Start')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('المبلغ', 'Amount')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('الرصيد', 'Balance')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('المتبقي', 'Remaining')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('الإغلاق', 'Close')}
+                            </th>
+                            <th scope="col" className="whitespace-nowrap px-3 py-3 text-center sm:px-4">
+                              {t('الإجراءات', 'Actions')}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="bg-white transition-colors hover:bg-gray-50/40">
+                            <td className="max-w-[200px] px-3 py-4 text-start font-bold text-gray-900 sm:px-4">
+                              <span className="line-clamp-2">{goalName || t('بدون اسم', 'Unnamed')}</span>
+                            </td>
+                            <td
+                              className="whitespace-nowrap px-3 py-4 text-center text-gray-600 sm:px-4"
+                              dir="ltr"
+                            >
+                              {formatGregorianDate(parseLocalISODate(startD), locale)}
+                            </td>
+                            <td
+                              className="whitespace-nowrap px-3 py-4 text-center font-semibold text-gray-900 sm:px-4"
+                              dir="ltr"
+                            >
+                              {formatMoney(target, locale)}
+                            </td>
+                            <td
+                              className="whitespace-nowrap px-3 py-4 text-center font-semibold text-gray-800 sm:px-4"
+                              dir="ltr"
+                            >
+                              {formatMoney(cur, locale)}
+                            </td>
+                            <td
+                              className="whitespace-nowrap px-3 py-4 text-center font-bold text-[#D97706] sm:px-4"
+                              dir="ltr"
+                            >
+                              {formatMoney(remaining, locale)}
+                            </td>
+                            <td
+                              className="whitespace-nowrap px-3 py-4 text-center text-gray-600 sm:px-4"
+                              dir="ltr"
+                            >
+                              {endD ? formatGregorianDate(parseLocalISODate(endD), locale) : '—'}
+                            </td>
+                            <td className="whitespace-nowrap px-3 py-4 text-center sm:px-4">
+                              <div className="flex flex-nowrap items-center justify-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => openDeposit(g)}
+                                  className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-[#10B981]/15 px-2 py-1.5 text-xs font-bold text-[#059669] hover:bg-[#10B981]/25"
+                                >
+                                  <ArrowDownLeft className="h-3.5 w-3.5" aria-hidden />
+                                  {t('إيداع', 'Deposit')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openWithdraw(g)}
+                                  disabled={cur <= 0.0001}
+                                  className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-[#E5E7EB] bg-white px-2 py-1.5 text-xs font-bold text-[#374151] hover:bg-gray-50 disabled:opacity-40"
+                                >
+                                  <ArrowUpRight className="h-3.5 w-3.5" aria-hidden />
+                                  {t('سحب', 'Withdraw')}
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => openEditGoal(g)}
+                                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-[#2563EB] transition-colors hover:bg-blue-50"
+                                  title={t('تعديل', 'Edit')}
+                                  aria-label={t('تعديل', 'Edit')}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDelete(g)}
+                                  disabled={deletingId === g.id}
+                                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-200 text-red-600 transition-colors hover:bg-red-50 disabled:opacity-50"
+                                  title={t('حذف', 'Delete')}
+                                  aria-label={t('حذف', 'Delete')}
+                                >
+                                  {deletingId === g.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-4 w-4" />
+                                  )}
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
 
-                    <div className="mt-3">
-                      <div className="mb-2 flex items-center justify-between gap-2 text-[10px] font-semibold uppercase tracking-wide text-[#6B7280]">
-                        <span>{t('التقدم', 'Progress')}</span>
-                        <span dir="ltr" className="tabular-nums text-[#374151]">
+                    {/* القسم السفلي: التقدم والنسبة والمؤشر */}
+                    <div className="bg-gray-50/40 px-4 py-4 sm:px-5 sm:py-5">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <span className="text-sm font-bold text-gray-800">
+                          {t('التقدم', 'Progress')}
+                        </span>
+                        <span
+                          dir="ltr"
+                          className="text-lg font-extrabold tabular-nums tracking-tight text-gray-900"
+                        >
                           {pct.toFixed(0)}%
                         </span>
                       </div>
-                      <div className="h-2.5 overflow-hidden rounded-full bg-[#E5E7EB]">
+                      <div
+                        className="h-4 overflow-hidden rounded-full bg-gray-200/90 ring-1 ring-inset ring-gray-300/60 sm:h-5"
+                        dir="ltr"
+                        role="progressbar"
+                        aria-valuenow={Math.round(pct)}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={t('التقدم', 'Progress')}
+                      >
                         <div
                           className={cn(
-                            'h-full rounded-full bg-[#2563EB] transition-all duration-300',
-                            pct >= 100 && 'bg-[#10B981]'
+                            'h-full rounded-full bg-[#2563EB] shadow-[inset_0_1px_0_rgba(255,255,255,0.25)] transition-all duration-300',
+                            pct >= 100 && 'bg-[#10B981]',
+                            pct > 0 && pct < 100 && 'min-w-[12px]'
                           )}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 border-t border-[#E5E7EB] pt-3 text-xs text-[#6B7280]">
-                      <span>
-                        {t('المستهدف:', 'Target:')}{' '}
-                        <span className="font-bold text-[#111827] tabular-nums" dir="ltr">
-                          {formatMoney(target, locale)}
-                        </span>
-                      </span>
-                      <span>
-                        {t('الرصيد:', 'Saved:')}{' '}
-                        <span className="font-bold text-[#374151] tabular-nums" dir="ltr">
-                          {formatMoney(cur, locale)}
-                        </span>
-                      </span>
-                      <span>
-                        {t('المتبقي:', 'Remaining:')}{' '}
-                        <span className="font-bold tabular-nums text-[#D97706]" dir="ltr">
-                          {formatMoney(Math.max(0, target - cur), locale)}
-                        </span>
-                      </span>
                     </div>
                   </li>
                 )
