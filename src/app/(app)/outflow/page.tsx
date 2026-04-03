@@ -21,6 +21,7 @@ import { useAvailableCash } from '@/hooks/useAvailableCash'
 import { GeneralOutflowModal } from '@/components/outflow/GeneralOutflowModal'
 import { ObligationFormModal } from '@/components/outflow/ObligationFormModal'
 import { ObligationPayModal } from '@/components/outflow/ObligationPayModal'
+import { useAlert } from '@/contexts/AlertContext'
 import {
   Pencil,
   Trash2,
@@ -51,6 +52,8 @@ export default function OutflowPage() {
   const [editingObligation, setEditingObligation] = useState<Obligation | null>(null)
   const [payObligation, setPayObligation] = useState<Obligation | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const { showAlert, closeAlert } = useAlert()
 
   const start = dateToLocalISODate(periodDates.start)
   const end = dateToLocalISODate(periodDates.end)
@@ -155,16 +158,27 @@ export default function OutflowPage() {
   }
 
   async function deleteGeneral(id: string) {
-    if (!confirm(t('حذف هذا المصروف؟', 'Delete this expense?'))) return
-    setDeletingId(id)
-    const supabase = createClient()
-    const { error: delErr } = await supabase.from('outflows').delete().eq('id', id)
-    setDeletingId(null)
-    if (delErr) {
-      alert(delErr.message)
-      return
-    }
-    reloadAll()
+    showAlert({
+      type: 'confirm',
+      message: t('هل أنت متأكد من رغبتك في حذف هذا المصروف بشكل نهائي؟ لن تتمكن من التراجع عن هذا الإجراء.', 'Delete this expense permanently? You will not be able to undo this action.'),
+      onConfirm: () => {
+        closeAlert()
+        void (async () => {
+          setDeletingId(id)
+          const supabase = createClient()
+          const { error: delErr } = await supabase.from('outflows').delete().eq('id', id)
+          setDeletingId(null)
+          if (delErr) {
+            showAlert({
+              type: 'alert',
+              message: delErr.message,
+            })
+            return
+          }
+          reloadAll()
+        })()
+      },
+    })
   }
 
   function openAddObligation() {
@@ -180,24 +194,40 @@ export default function OutflowPage() {
   async function deleteObligation(row: Obligation) {
     const markerPaid = sumLegacyMarkerPayments(obligationPaymentOutflows, row.id)
     if (obligationPaidAmount(row, markerPaid) > 0.0001) {
-      alert(
-        t(
+      showAlert({
+        type: 'alert',
+        message: t(
           'لا يمكن حذف التزام مرتبط بمدفوعات مالية. للحذف، يرجى تعديل الالتزام وتصفير "المبلغ المسدد" أولاً لاسترداد المبلغ للمحفظة.',
           "Cannot delete an obligation linked to financial payments. To delete it, please edit the obligation and set 'Paid Amount' to zero first to restore the funds to your wallet."
-        )
-      )
+        ),
+      })
       return
     }
-    if (!confirm(t('حذف هذا الالتزام؟', 'Delete this obligation?'))) return
-    setDeletingId(row.id)
-    const supabase = createClient()
-    const { error: delErr } = await supabase.from('obligations').delete().eq('id', row.id)
-    setDeletingId(null)
-    if (delErr) {
-      alert(delErr.message)
-      return
-    }
-    reloadAll()
+
+    showAlert({
+      type: 'confirm',
+      message: t(
+        'هل أنت متأكد من رغبتك في حذف هذا الالتزام بشكل نهائي؟ لن تتمكن من التراجع عن هذا الإجراء.',
+        'Delete this obligation permanently? You will not be able to undo this action.'
+      ),
+      onConfirm: () => {
+        closeAlert()
+        void (async () => {
+          setDeletingId(row.id)
+          const supabase = createClient()
+          const { error: delErr } = await supabase.from('obligations').delete().eq('id', row.id)
+          setDeletingId(null)
+          if (delErr) {
+            showAlert({
+              type: 'alert',
+              message: delErr.message,
+            })
+            return
+          }
+          reloadAll()
+        })()
+      },
+    })
   }
 
   return (

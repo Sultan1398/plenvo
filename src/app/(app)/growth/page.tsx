@@ -26,6 +26,7 @@ import { deleteSavingsGoalWithOrderedTxRemoval } from '@/lib/savings-delete-goal
 import type { SavingsGoal } from '@/types/database'
 import { cn } from '@/lib/utils'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
+import { useAlert } from '@/contexts/AlertContext'
 
 const growthNav = getAppNavItem('/growth')
 
@@ -37,6 +38,8 @@ export default function GrowthPage() {
   const [growthWalletBalance, setGrowthWalletBalance] = useState(0)
   const [fetchError, setFetchError] = useState('')
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const { showAlert, closeAlert } = useAlert()
 
   const [formOpen, setFormOpen] = useState(false)
   const [editingGoal, setEditingGoal] = useState<SavingsGoal | null>(null)
@@ -132,52 +135,78 @@ export default function GrowthPage() {
             'Deleting will remove transactions and restore liquidity in the affected periods (balance returns to the wallet logically). Continue?'
           )
         : t('حذف هذا الهدف؟', 'Delete this savings goal?')
-    if (!confirm(msg)) return
+    showAlert({
+      type: 'confirm',
+      title: t('تأكيد', 'Confirm'),
+      message: msg,
+      onConfirm: () => {
+        closeAlert()
+        void (async () => {
+          setDeletingId(g.id)
+          const supabase = createClient()
+          const shouldReturnToWallet = bal > 0.0001
+          if (shouldReturnToWallet) {
+            const {
+              data: { user },
+            } = await supabase.auth.getUser()
+            if (!user) {
+              setDeletingId(null)
+              showAlert({
+                type: 'alert',
+                title: t('تنبيه', 'Notice'),
+                message: t('يجب تسجيل الدخول', 'You must be signed in'),
+                onConfirm: closeAlert,
+              })
+              return
+            }
+            // return goal balance to growth wallet before closing/deleting it
+            const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
+              user_id: user.id,
+              amount: bal,
+              transaction_type: 'deposit',
+            })
+            if (walletTxErr) {
+              setDeletingId(null)
+              showAlert({
+                type: 'alert',
+                title: t('خطأ', 'Error'),
+                message: walletTxErr.message,
+                onConfirm: closeAlert,
+              })
+              return
+            }
+          }
 
-    setDeletingId(g.id)
-    const supabase = createClient()
-    const shouldReturnToWallet = bal > 0.0001
-    if (shouldReturnToWallet) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        setDeletingId(null)
-        alert(t('يجب تسجيل الدخول', 'You must be signed in'))
-        return
-      }
-      // return goal balance to growth wallet before closing/deleting it
-      const { error: walletTxErr } = await supabase.from('growth_wallet_transactions').insert({
-        user_id: user.id,
-        amount: bal,
-        transaction_type: 'deposit',
-      })
-      if (walletTxErr) {
-        setDeletingId(null)
-        alert(walletTxErr.message)
-        return
-      }
-    }
-    const { error: delErr } = await deleteSavingsGoalWithOrderedTxRemoval(supabase, g.id)
-    setDeletingId(null)
-    if (delErr) {
-      if (shouldReturnToWallet) {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser()
-        if (user) {
-          // compensate wallet if deletion failed
-          await supabase.from('growth_wallet_transactions').insert({
-            user_id: user.id,
-            amount: bal,
-            transaction_type: 'withdrawal',
-          })
-        }
-      }
-      alert(delErr.message)
-      return
-    }
-    void fetchGrowthData()
+          const { error: delErr } = await deleteSavingsGoalWithOrderedTxRemoval(supabase, g.id)
+          setDeletingId(null)
+          if (delErr) {
+            if (shouldReturnToWallet) {
+              const {
+                data: { user },
+              } = await supabase.auth.getUser()
+              if (user) {
+                // compensate wallet if deletion failed
+                await supabase.from('growth_wallet_transactions').insert({
+                  user_id: user.id,
+                  amount: bal,
+                  transaction_type: 'withdrawal',
+                })
+              }
+            }
+
+            showAlert({
+              type: 'alert',
+              title: t('خطأ', 'Error'),
+              message: delErr.message,
+              onConfirm: closeAlert,
+            })
+            return
+          }
+
+          void fetchGrowthData()
+        })()
+      },
+    })
   }
 
   return (

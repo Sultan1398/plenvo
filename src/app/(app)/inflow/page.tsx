@@ -16,6 +16,7 @@ import { Pencil, Trash2, Loader2, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRolloverBalance } from '@/hooks/useRolloverBalance'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
+import { useAlert } from '@/contexts/AlertContext'
 import { TrendUp, ListDashes, CaretUp, CaretDown } from '@phosphor-icons/react'
 
 const inflowNav = getAppNavItem('/inflow')
@@ -30,6 +31,7 @@ export default function InflowPage() {
   const [editing, setEditing] = useState<Inflow | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
   const [isSourcesOpen, setIsSourcesOpen] = useState(true)
+  const { showAlert } = useAlert()
 
   const {
     rolledOverBalance,
@@ -108,17 +110,29 @@ export default function InflowPage() {
     setModalOpen(true)
   }
 
-  async function handleDelete(id: string) {
-    if (!confirm(t('حذف هذا المصدر؟', 'Delete this income source?'))) return
-    setDeletingId(id)
-    const supabase = createClient()
-    const { error } = await supabase.from('inflows').delete().eq('id', id)
-    setDeletingId(null)
-    if (error) {
-      alert(error.message)
-      return
-    }
-    loadInflows()
+  function handleDelete(id: string) {
+    showAlert({
+      type: 'confirm',
+      title: t('تأكيد', 'Confirm'),
+      message: t('حذف هذا المصدر؟', 'Delete this income source?'),
+      onConfirm: () => {
+        void (async () => {
+          setDeletingId(id)
+          const supabase = createClient()
+          const { error } = await supabase.from('inflows').delete().eq('id', id)
+          setDeletingId(null)
+          if (error) {
+            showAlert({
+              type: 'alert',
+              title: t('خطأ', 'Error'),
+              message: error.message,
+            })
+            return
+          }
+          loadInflows()
+        })()
+      },
+    })
   }
 
   return (

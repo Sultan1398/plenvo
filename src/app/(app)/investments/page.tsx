@@ -31,6 +31,7 @@ import {
 import { ChartLineUp, Plus as PhosphorPlus } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
+import { useAlert } from '@/contexts/AlertContext'
 
 const investmentsNav = getAppNavItem('/investments')
 
@@ -183,6 +184,7 @@ export default function InvestmentsPage() {
 
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const { showAlert, closeAlert } = useAlert()
 
   function openNewDeal() {
     setDealModalMode('create')
@@ -203,71 +205,92 @@ export default function InvestmentsPage() {
 
   // (1) إلغاء الإغلاق: حذف deal_close ثم إعادة الصفقة إلى open
   async function cancelCloseDeal(inv: Investment) {
-    if (
-      !confirm(
-        t(
-          'إلغاء إغلاق هذه الصفقة؟ سيتم حذف عملية الإغلاق وإرجاعها إلى الصفقات المفتوحة.',
-          'Cancel close for this deal? The close transaction will be removed and the deal will return to open.'
-        )
-      )
-    )
-      return
+    showAlert({
+      type: 'confirm',
+      title: t('تأكيد', 'Confirm'),
+      message: t(
+        'إلغاء إغلاق هذه الصفقة؟ سيتم حذف عملية الإغلاق وإرجاعها إلى الصفقات المفتوحة.',
+        'Cancel close for this deal? The close transaction will be removed and the deal will return to open.'
+      ),
+      onConfirm: () => {
+        closeAlert()
+        void (async () => {
+          setCancellingId(inv.id)
+          const supabase = createClient()
 
-    setCancellingId(inv.id)
-    const supabase = createClient()
+          const { error: delTxErr } = await supabase
+            .from('investment_wallet_transactions')
+            .delete()
+            .eq('investment_id', inv.id)
+            .eq('type', 'deal_close')
 
-    const { error: delTxErr } = await supabase
-      .from('investment_wallet_transactions')
-      .delete()
-      .eq('investment_id', inv.id)
-      .eq('type', 'deal_close')
+          if (delTxErr) {
+            setCancellingId(null)
+            showAlert({
+              type: 'alert',
+              title: t('خطأ', 'Error'),
+              message: delTxErr.message,
+              onConfirm: closeAlert,
+            })
+            return
+          }
 
-    if (delTxErr) {
-      setCancellingId(null)
-      alert(delTxErr.message)
-      return
-    }
+          const { error: upErr } = await supabase
+            .from('investments')
+            .update({ status: 'open', exit_amount: null, exit_date: null })
+            .eq('id', inv.id)
 
-    const { error: upErr } = await supabase
-      .from('investments')
-      .update({ status: 'open', exit_amount: null, exit_date: null })
-      .eq('id', inv.id)
+          setCancellingId(null)
 
-    setCancellingId(null)
+          if (upErr) {
+            showAlert({
+              type: 'alert',
+              title: t('خطأ', 'Error'),
+              message: upErr.message,
+              onConfirm: closeAlert,
+            })
+            return
+          }
 
-    if (upErr) {
-      alert(upErr.message)
-      return
-    }
-
-    reload()
+          reload()
+        })()
+      },
+    })
   }
 
   // (3) حذف الصفقة المفتوحة فقط (ستُرجع الأموال داخلياً عبر ON DELETE CASCADE)
   async function deleteOpenDeal(inv: Investment) {
-    if (
-      !confirm(
-        t(
-          'حذف الصفقة المفتوحة؟ سيتم حذفها وإرجاع الأموال إلى محفظة الاستثمارات.',
-          'Delete this open deal? Funds will be returned to the investments wallet.'
-        )
-      )
-    )
-      return
+    showAlert({
+      type: 'confirm',
+      title: t('تأكيد', 'Confirm'),
+      message: t(
+        'حذف الصفقة المفتوحة؟ سيتم حذفها وإرجاع الأموال إلى محفظة الاستثمارات.',
+        'Delete this open deal? Funds will be returned to the investments wallet.'
+      ),
+      onConfirm: () => {
+        closeAlert()
+        void (async () => {
+          setDeletingId(inv.id)
+          const supabase = createClient()
 
-    setDeletingId(inv.id)
-    const supabase = createClient()
+          const { error: delErr } = await supabase.from('investments').delete().eq('id', inv.id)
 
-    const { error: delErr } = await supabase.from('investments').delete().eq('id', inv.id)
+          setDeletingId(null)
 
-    setDeletingId(null)
+          if (delErr) {
+            showAlert({
+              type: 'alert',
+              title: t('خطأ', 'Error'),
+              message: delErr.message,
+              onConfirm: closeAlert,
+            })
+            return
+          }
 
-    if (delErr) {
-      alert(delErr.message)
-      return
-    }
-
-    reload()
+          reload()
+        })()
+      },
+    })
   }
 
   return (

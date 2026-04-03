@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Almarai, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { AlertProvider } from '@/contexts/AlertContext'
 
 const almarai = Almarai({
   weight: ['300', '400', '700', '800'],
@@ -38,7 +39,9 @@ export default function RootLayout({
       <body
         className={`min-h-full flex flex-col bg-background text-foreground ${almarai.className}`}
       >
-        <LanguageProvider>{children}</LanguageProvider>
+        <AlertProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </AlertProvider>
       </body>
     </html>
   )
