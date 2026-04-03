@@ -181,7 +181,10 @@ export default function OutflowPage() {
     const markerPaid = sumLegacyMarkerPayments(obligationPaymentOutflows, row.id)
     if (obligationPaidAmount(row, markerPaid) > 0.0001) {
       alert(
-        t('لا يمكن حذف التزام تم سداد جزء منه', 'Cannot delete an obligation that has payments recorded')
+        t(
+          'لا يمكن حذف التزام مرتبط بمدفوعات مالية. للحذف، يرجى تعديل الالتزام وتصفير "المبلغ المسدد" أولاً لاسترداد المبلغ للمحفظة.',
+          "Cannot delete an obligation linked to financial payments. To delete it, please edit the obligation and set 'Paid Amount' to zero first to restore the funds to your wallet."
+        )
       )
       return
     }
