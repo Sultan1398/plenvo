@@ -16,15 +16,31 @@ const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
 })
 
+const siteDescription =
+  'Plenvo (بلينفو) — تتبّع الدخل والمصروفات والادخار والاستثمار عبر فترات مالية ديناميكية. Track income, expenses, savings, and investments across dynamic financial periods.'
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://plenvoapp.com'),
   title: {
-    default: 'Plenvo — Personal Finance Flow',
+    default: 'Plenvo | بلينفو — Personal Finance Flow',
     template: '%s — Plenvo',
   },
-  description:
-    'Track your income, expenses, savings, and investments across dynamic financial periods with Plenvo.',
+  description: siteDescription,
   applicationName: 'Plenvo',
+  openGraph: {
+    type: 'website',
+    url: 'https://plenvoapp.com',
+    siteName: 'Plenvo',
+    title: 'Plenvo | بلينفو',
+    description: siteDescription,
+    locale: 'ar',
+    alternateLocale: ['en'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Plenvo | بلينفو',
+    description: siteDescription,
+  },
   icons: {
     icon: '/icon.png',
     apple: '/icon.png',

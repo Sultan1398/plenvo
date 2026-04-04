@@ -34,11 +34,14 @@ export function CustomAlert({
               'flex h-10 w-10 shrink-0 items-center justify-center rounded-xl',
               type === 'confirm' ? 'bg-red-600' : 'bg-[#2563EB]'
             )}
+            {...(type === 'confirm' ? {} : { 'aria-label': 'Plenvo' })}
           >
             {type === 'confirm' ? (
               <WarningCircle weight="fill" className="h-5 w-5 text-white" aria-hidden />
             ) : (
-              <span className="text-sm font-black tracking-tight text-white">Pl</span>
+              <span className="text-xl font-black tracking-tight text-white" aria-hidden>
+                P
+              </span>
             )}
           </div>
 
