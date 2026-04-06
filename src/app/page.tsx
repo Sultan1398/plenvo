@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Footer } from '@/components/Footer'
 import { Navbar } from '@/components/Navbar'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { isPromoTrialPeriodActive } from '@/lib/trial'
 import { cn } from '@/lib/utils'
 
 /**
@@ -53,6 +54,7 @@ function LandingImage({
 export default function LandingPage() {
   const { locale, t } = useLanguage()
   const l = locale
+  const promoTrial = isPromoTrialPeriodActive()
 
   return (
     <div
@@ -102,7 +104,12 @@ export default function LandingPage() {
               href="/signup"
               className="rounded-xl bg-brand px-8 py-4 text-lg font-bold text-white shadow-lg shadow-brand/25 transition-all hover:bg-brand-dark"
             >
-              {t('ابدأ تجربتك المجانية (14 يوماً)', 'Start your 14-day free trial')}
+              {promoTrial
+                ? t(
+                    'استمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026! 🎉',
+                    'Enjoy full Plenvo for free until June 30, 2026! 🎉'
+                  )
+                : t('ابدأ تجربتك المجانية لمدة 14 يوماً', 'Start your 14-day free trial')}
             </Link>
           </div>
           <div className="relative mx-auto mt-12 max-w-5xl sm:mt-16">
@@ -238,7 +245,15 @@ export default function LandingPage() {
               <p className="text-5xl font-extrabold tracking-tight text-brand sm:text-6xl">1.99$</p>
               <p className="mt-2 text-base font-medium text-slate-600 sm:text-lg">{t('شهرياً', 'per month')}</p>
               <p className="mt-6 text-base font-semibold text-slate-800 sm:text-lg">
-                {t('أول 14 يوماً مجاناً، ألغِ اشتراكك في أي وقت.', 'First 14 days free, cancel anytime.')}
+                {promoTrial
+                  ? t(
+                      'استمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026!',
+                      'Enjoy full Plenvo for free until June 30, 2026!'
+                    )
+                  : t(
+                      'ابدأ تجربتك المجانية لمدة 14 يوماً — ألغِ اشتراكك في أي وقت.',
+                      'Start with a 14-day free trial — cancel anytime.'
+                    )}
               </p>
               <div className="mt-8">
                 <Link
@@ -262,7 +277,12 @@ export default function LandingPage() {
               href="/signup"
               className="rounded-xl bg-brand px-8 py-4 text-lg font-bold text-white shadow-lg shadow-brand/25 transition-all hover:bg-brand-dark"
             >
-              {t('ابدأ تجربتك المجانية (14 يوماً)', 'Start your 14-day free trial')}
+              {promoTrial
+                ? t(
+                    'استمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026! 🎉',
+                    'Enjoy full Plenvo for free until June 30, 2026! 🎉'
+                  )
+                : t('ابدأ تجربتك المجانية لمدة 14 يوماً', 'Start your 14-day free trial')}
             </Link>
           </div>
         </section>
