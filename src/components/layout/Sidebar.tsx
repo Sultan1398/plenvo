@@ -42,7 +42,7 @@ function SidebarContent({
   return (
     <>
       <div className="flex items-center justify-between gap-2 border-b border-border bg-white px-5 py-6">
-        <Logo size="lg" showName />
+        <Logo size="md" textSize="lg" showName />
         {showCloseButton ? (
           <button
             type="button"

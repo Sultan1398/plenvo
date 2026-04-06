@@ -7,6 +7,8 @@ import { cn } from '@/lib/utils'
 interface LogoProps {
   /** sm: مدمج | md: الشريط الجانبي | lg: تسجيل الدخول | xl: ترحيب مع الاسم */
   size?: 'sm' | 'md' | 'lg' | 'xl'
+  /** يتحكم فقط بحجم نص الاسم، مستقل عن حجم الأيقونة */
+  textSize?: 'sm' | 'md' | 'lg' | 'xl'
   showName?: boolean
   className?: string
 }
@@ -42,9 +44,10 @@ const sizes = {
   },
 }
 
-export function Logo({ size = 'md', showName = true, className }: LogoProps) {
+export function Logo({ size = 'md', textSize, showName = true, className }: LogoProps) {
   const { locale } = useLanguage()
   const cfg = sizes[size]
+  const textCfg = sizes[textSize ?? size]
 
   return (
     <div className={cn('flex items-center', cfg.gap, className)}>
@@ -70,7 +73,7 @@ export function Logo({ size = 'md', showName = true, className }: LogoProps) {
         <span
           className={cn(
             'text-foreground leading-tight',
-            cfg.text,
+            textCfg.text,
             locale === 'en' && 'tracking-tight'
           )}
         >
