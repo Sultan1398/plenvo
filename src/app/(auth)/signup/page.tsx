@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -10,12 +9,12 @@ import { mapAuthError } from '@/lib/utils/auth-errors'
 
 export default function SignupPage() {
   const { t, toggleLocale, locale } = useLanguage()
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -34,17 +33,9 @@ export default function SignupPage() {
     setLoading(true)
     try {
       const supabase = createClient()
-      const { data, error: authError } = await supabase.auth.signUp({ email, password })
+      const { error: authError } = await supabase.auth.signUp({ email, password })
       if (authError) throw new Error(authError.message)
-
-      // Try to guarantee an authenticated session, then route directly to app.
-      if (!data.session) {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
-        if (signInError) throw new Error(signInError.message)
-      }
-
-      router.replace('/hub')
-      router.refresh()
+      setIsSubmitted(true)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       setError(mapAuthError(message))
@@ -72,21 +63,29 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-border p-8">
-          <>
-            <h1 className="text-2xl font-bold text-center mb-1">
-              {t('إنشاء حساب جديد', 'Create Account')}
-            </h1>
-            <p className="text-muted text-center text-sm mb-3">
-              {t('ابدأ رحلتك المالية مع بلينفو', 'Start your financial journey with Plenvo')}
-            </p>
-            <p className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-800">
+          {isSubmitted ? (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-center text-sm font-semibold text-emerald-800">
               {t(
-                'سجل الآن واستمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026 🚀',
-                'Sign up now and enjoy Plenvo completely free until June 30, 2026 🚀'
+                'تم إنشاء حسابك بنجاح! 🚀 يرجى التحقق من بريدك الإلكتروني والضغط على رابط التفعيل للبدء في استخدام بلينفو.',
+                'Your account has been created successfully! 🚀 Please check your email and click the activation link to start using Plenvo.'
               )}
-            </p>
+            </div>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-center mb-1">
+                {t('إنشاء حساب جديد', 'Create Account')}
+              </h1>
+              <p className="text-muted text-center text-sm mb-3">
+                {t('ابدأ رحلتك المالية مع بلينفو', 'Start your financial journey with Plenvo')}
+              </p>
+              <p className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-800">
+                {t(
+                  'سجل الآن واستمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026 🚀',
+                  'Sign up now and enjoy Plenvo completely free until June 30, 2026 🚀'
+                )}
+              </p>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1.5">
                     {t('البريد الإلكتروني', 'Email')}
@@ -145,15 +144,16 @@ export default function SignupPage() {
                 >
                   {loading ? t('جاري الإنشاء...', 'Creating...') : t('إنشاء الحساب', 'Create Account')}
                 </button>
-            </form>
+              </form>
 
-            <p className="text-center text-sm text-muted mt-6">
-              {t('لديك حساب بالفعل؟', 'Already have an account?')}{' '}
-              <Link href="/login" className="text-brand hover:underline font-medium">
-                {t('تسجيل الدخول', 'Sign In')}
-              </Link>
-            </p>
-          </>
+              <p className="text-center text-sm text-muted mt-6">
+                {t('لديك حساب بالفعل؟', 'Already have an account?')}{' '}
+                <Link href="/login" className="text-brand hover:underline font-medium">
+                  {t('تسجيل الدخول', 'Sign In')}
+                </Link>
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>

@@ -50,6 +50,7 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/how-it-works/')
   const isAdminRoute = pathname === '/admin' || pathname.startsWith('/admin/')
   const isAdmin = user?.user_metadata?.role === 'admin'
+  const isEmailConfirmed = Boolean(user?.email_confirmed_at)
   const defaultAuthedPath = isAdmin ? '/admin' : '/hub'
   const allowWithoutAuth =
     pathname === '/' ||
@@ -61,6 +62,14 @@ export async function updateSession(request: NextRequest) {
   if (!user && !allowWithoutAuth) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
+    return NextResponse.redirect(url)
+  }
+
+  // Email-confirmation guard for protected routes.
+  // When email confirmation is enabled, unconfirmed users should not enter app pages.
+  if (user && !isEmailConfirmed && !allowWithoutAuth) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/signup'
     return NextResponse.redirect(url)
   }
 
