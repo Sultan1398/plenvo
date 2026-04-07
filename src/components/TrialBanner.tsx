@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import type { SubscriptionStatus } from '@/types/database'
@@ -62,21 +61,18 @@ export function TrialBanner({
     <div className="border-b border-blue-200 bg-blue-50 px-4 py-3 sm:px-6">
       <div className="mx-auto flex w-full max-w-7xl flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <p className="text-sm font-medium text-blue-900 sm:text-base">
-          {t('الفترة التجريبية: متبقي', 'Trial period:')} <span className="font-bold">{safeDays}</span>{' '}
-          {t('أيام.', 'days left.')}
+          {t(
+            'أنت الآن على الخطة الترويجية المجانية الصالحة حتى 30 يونيو 2026',
+            'You are on the free promotional plan valid until June 30, 2026'
+          )}
+          {' · '}
+          {t('المتبقي', 'Remaining')}: <span className="font-bold">{safeDays}</span> {t('أيام.', 'days.')}
           {isExpiring && (
             <span className="ms-2 text-xs font-semibold text-blue-700">
               {t('... جارٍ تحديث الحالة', '... updating status')}
             </span>
           )}
         </p>
-
-        <Link
-          href="#"
-          className="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-brand-dark"
-        >
-          {t('اشترك عبر تطبيق الجوال', 'Subscribe via mobile app')}
-        </Link>
       </div>
     </div>
   )

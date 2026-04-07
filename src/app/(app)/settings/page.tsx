@@ -231,6 +231,16 @@ export default function SettingsPage() {
 
       <ClearDataSection />
 
+      <div className="bg-white rounded-2xl border border-border shadow-sm p-6">
+        <h2 className="text-base font-semibold mb-1">{t('الفوترة والاشتراك', 'Billing & subscription')}</h2>
+        <p className="text-sm text-emerald-800 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3">
+          {t(
+            'أنت الآن على الخطة الترويجية المجانية الصالحة حتى 30 يونيو 2026',
+            'You are on the free promotional plan valid until June 30, 2026'
+          )}
+        </p>
+      </div>
+
       {/* Language — النص يمين (بداية السطر في RTL)، الزر يسار البطاقة */}
       <div className="bg-white rounded-2xl border border-border shadow-sm p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

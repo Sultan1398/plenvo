@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { Logo } from '@/components/ui/Logo'
-import { MailCheck } from 'lucide-react'
 import { mapAuthError } from '@/lib/utils/auth-errors'
 
 export default function SignupPage() {
@@ -17,7 +16,6 @@ export default function SignupPage() {
   const [confirm, setConfirm] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -36,9 +34,17 @@ export default function SignupPage() {
     setLoading(true)
     try {
       const supabase = createClient()
-      const { error: authError } = await supabase.auth.signUp({ email, password })
+      const { data, error: authError } = await supabase.auth.signUp({ email, password })
       if (authError) throw new Error(authError.message)
-      setIsSubmitted(true)
+
+      // Try to guarantee an authenticated session, then route directly to app.
+      if (!data.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+        if (signInError) throw new Error(signInError.message)
+      }
+
+      router.replace('/hub')
+      router.refresh()
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       setError(mapAuthError(message))
@@ -66,44 +72,21 @@ export default function SignupPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-border p-8">
-          {isSubmitted ? (
-            <div className="text-center space-y-4">
-              <div className="mx-auto inline-flex h-16 w-16 items-center justify-center rounded-full bg-brand/10 text-brand">
-                <MailCheck className="h-9 w-9" />
-              </div>
-              <h2 className="text-2xl font-bold">
-                {t('تم إنشاء حسابك بنجاح!', 'Your account has been created successfully!')}
-              </h2>
-              <p className="text-slate-600">
-                {t(
-                  'لقد أرسلنا رابط التفعيل إلى بريدك الإلكتروني. يرجى الضغط على الرابط لتفعيل حسابك والبدء باستخدام بلينفو.',
-                  'We sent an activation link to your email. Please open it to activate your account and start using Plenvo.'
-                )}
-              </p>
-              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-600">
-                {t(
-                  '💡 ملاحظة: إذا لم تجد الرسالة في صندوق الوارد الأساسي، يرجى التحقق من مجلد الرسائل غير المرغوب فيها (Junk / Spam).',
-                  '💡 Note: If you do not find the message in your main inbox, please check your Junk / Spam folder.'
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => router.push('/login')}
-                className="w-full rounded-xl bg-brand py-2.5 font-medium text-white transition-colors hover:bg-brand-dark"
-              >
-                {t('العودة لتسجيل الدخول', 'Back to Sign In')}
-              </button>
-            </div>
-          ) : (
-            <>
-              <h1 className="text-2xl font-bold text-center mb-1">
-                {t('إنشاء حساب جديد', 'Create Account')}
-              </h1>
-              <p className="text-muted text-center text-sm mb-8">
-                {t('ابدأ رحلتك المالية مع بلينفو', 'Start your financial journey with Plenvo')}
-              </p>
+          <>
+            <h1 className="text-2xl font-bold text-center mb-1">
+              {t('إنشاء حساب جديد', 'Create Account')}
+            </h1>
+            <p className="text-muted text-center text-sm mb-3">
+              {t('ابدأ رحلتك المالية مع بلينفو', 'Start your financial journey with Plenvo')}
+            </p>
+            <p className="mb-8 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-800">
+              {t(
+                'سجل الآن واستمتع ببلينفو مجاناً بالكامل حتى 30 يونيو 2026 🚀',
+                'Sign up now and enjoy Plenvo completely free until June 30, 2026 🚀'
+              )}
+            </p>
 
-              <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-1.5">
                     {t('البريد الإلكتروني', 'Email')}
@@ -162,16 +145,15 @@ export default function SignupPage() {
                 >
                   {loading ? t('جاري الإنشاء...', 'Creating...') : t('إنشاء الحساب', 'Create Account')}
                 </button>
-              </form>
+            </form>
 
-              <p className="text-center text-sm text-muted mt-6">
-                {t('لديك حساب بالفعل؟', 'Already have an account?')}{' '}
-                <Link href="/login" className="text-brand hover:underline font-medium">
-                  {t('تسجيل الدخول', 'Sign In')}
-                </Link>
-              </p>
-            </>
-          )}
+            <p className="text-center text-sm text-muted mt-6">
+              {t('لديك حساب بالفعل؟', 'Already have an account?')}{' '}
+              <Link href="/login" className="text-brand hover:underline font-medium">
+                {t('تسجيل الدخول', 'Sign In')}
+              </Link>
+            </p>
+          </>
         </div>
       </div>
     </div>
