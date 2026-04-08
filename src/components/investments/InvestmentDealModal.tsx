@@ -166,7 +166,7 @@ export function InvestmentDealModal({ open, onClose, onSaved, mode, edit, period
         return
       }
 
-      const { error: txErr } = await (supabase as any).from('investment_wallet_transactions').insert({
+      const { error: txErr } = await supabase.from('investment_wallet_transactions').insert({
         user_id: user.id,
         type: 'deal_open',
         amount: num,
@@ -206,7 +206,7 @@ export function InvestmentDealModal({ open, onClose, onSaved, mode, edit, period
         return
       }
 
-      const { error: updTxErr } = await (supabase as any)
+      const { error: updTxErr } = await supabase
         .from('investment_wallet_transactions')
         .update({ amount: num, date: entryDate })
         .eq('id', openTx.id)

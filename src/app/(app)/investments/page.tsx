@@ -27,8 +27,9 @@ import {
   ScrollText,
   LineChart,
   RotateCcw,
+  TrendingUp,
+  Plus,
 } from 'lucide-react'
-import { ChartLineUp, Plus as PhosphorPlus } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
 import { useAlert } from '@/contexts/AlertContext'
@@ -405,7 +406,7 @@ export default function InvestmentsPage() {
               <div className="flex flex-wrap items-center justify-between gap-3 p-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50">
-                    <ChartLineUp weight="duotone" className="h-6 w-6 text-indigo-600" aria-hidden />
+                    <TrendingUp className="h-6 w-6 text-indigo-600" aria-hidden />
                   </div>
                   <h2 className="text-lg font-bold text-[#1F2937]">{t('سجل الصفقات', 'Deals Log')}</h2>
                 </div>
@@ -423,7 +424,7 @@ export default function InvestmentsPage() {
                     onClick={openNewDeal}
                     className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-indigo-600 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-indigo-700"
                   >
-                    <PhosphorPlus weight="bold" className="h-4 w-4" aria-hidden />
+                    <Plus className="h-4 w-4" aria-hidden />
                     {t('صفقة جديدة', 'New Deal')}
                   </button>
                 </div>
@@ -432,7 +433,7 @@ export default function InvestmentsPage() {
               <div className="mt-2 w-full overflow-x-auto border-t border-gray-100">
                 {sortedDeals.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-12 text-center text-gray-500">
-                    <ChartLineUp weight="duotone" className="mb-4 h-16 w-16 text-gray-200" aria-hidden />
+                    <TrendingUp className="mb-4 h-16 w-16 text-gray-200" aria-hidden />
                     <p className="mb-5 font-medium">{t('لا توجد صفقات مسجلة.', 'No deals registered.')}</p>
                     <button
                       type="button"

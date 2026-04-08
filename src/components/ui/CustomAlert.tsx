@@ -1,4 +1,7 @@
-import { X, WarningCircle } from '@phosphor-icons/react'
+'use client'
+
+import { AlertCircle, X } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 
 type CustomAlertProps = {
@@ -18,6 +21,7 @@ export function CustomAlert({
   onConfirm,
   onCancel,
 }: CustomAlertProps) {
+  const { t } = useLanguage()
   if (!isOpen) return null
 
   return (
@@ -37,7 +41,7 @@ export function CustomAlert({
             {...(type === 'confirm' ? {} : { 'aria-label': 'Plenvo' })}
           >
             {type === 'confirm' ? (
-              <WarningCircle weight="fill" className="h-5 w-5 text-white" aria-hidden />
+              <AlertCircle className="h-5 w-5 text-white" aria-hidden />
             ) : (
               <span className="text-xl font-black tracking-tight text-white" aria-hidden>
                 P
@@ -53,7 +57,7 @@ export function CustomAlert({
             className="mr-auto rounded-full p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
             aria-label="Close"
           >
-            <X weight="bold" className="h-5 w-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
@@ -78,7 +82,7 @@ export function CustomAlert({
               type === 'confirm' ? 'bg-red-600 hover:bg-red-700' : 'bg-[#2563EB] hover:bg-[#1D4ED8]'
             )}
           >
-            {type === 'confirm' ? 'تأكيد الحذف' : 'حسناً'}
+            {type === 'confirm' ? t('تأكيد الحذف', 'Confirm Delete') : t('حسناً', 'OK')}
           </button>
         </div>
       </div>

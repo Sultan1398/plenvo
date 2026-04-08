@@ -30,20 +30,20 @@ export default function ResetPasswordPage() {
       const ok = Boolean(session)
       setHasRecoverySession(ok)
       if (!ok) {
-        setError(mapAuthError('invalid_recovery_code'))
+        setError(mapAuthError('invalid_recovery_code', locale))
       }
     })()
     return () => {
       mounted = false
     }
-  }, [])
+  }, [locale])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError('')
 
     if (hasRecoverySession === false) {
-      setError(mapAuthError('invalid_recovery_code'))
+      setError(mapAuthError('invalid_recovery_code', locale))
       return
     }
 
@@ -65,7 +65,7 @@ export default function ResetPasswordPage() {
       setIsUpdated(true)
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      setError(mapAuthError(message))
+      setError(mapAuthError(message, locale))
     } finally {
       setLoading(false)
     }

@@ -1,21 +1,25 @@
 import { createClient } from '@/lib/supabase/client'
+import type { InvestmentWalletTransaction } from '@/types/database'
 
 type Supabase = ReturnType<typeof createClient>
 
 /** صافي رصيد محفظة الاستثمارات الداخلية الآن (بدون فلترة تواريخ). */
 export async function computeInvestmentInternalBalance(supabase: Supabase, userId: string): Promise<number> {
-  const invRes = await (supabase as any).from('investment_wallet_transactions').select('amount, type').eq('user_id', userId)
+  const invRes = await supabase
+    .from('investment_wallet_transactions')
+    .select('amount, type')
+    .eq('user_id', userId)
 
   if (invRes.error) return 0
 
+  const rows: Pick<InvestmentWalletTransaction, 'amount' | 'type'>[] = invRes.data ?? []
   let bal = 0
-  for (const r of invRes.data ?? []) {
-    const row = r as { amount: number; type: string }
-    const a = Number(row.amount)
-    if (row.type === 'deposit') bal += a
-    else if (row.type === 'deal_close') bal += a
-    else if (row.type === 'withdrawal') bal -= a
-    else if (row.type === 'deal_open') bal -= a
+  for (const r of rows) {
+    const a = Number(r.amount)
+    if (r.type === 'deposit') bal += a
+    else if (r.type === 'deal_close') bal += a
+    else if (r.type === 'withdrawal') bal -= a
+    else if (r.type === 'deal_open') bal -= a
   }
   return bal
 }
@@ -31,7 +35,7 @@ export async function getInvestmentDealOpenTx(
   userId: string,
   investmentId: string
 ): Promise<InvestmentOpenTx> {
-  const res = await (supabase as any)
+  const res = await supabase
     .from('investment_wallet_transactions')
     .select('id, amount, date')
     .eq('user_id', userId)
@@ -41,6 +45,7 @@ export async function getInvestmentDealOpenTx(
 
   if (res.error) return null
   if (!res.data) return null
-  return res.data as InvestmentOpenTx
+  const row: Pick<InvestmentWalletTransaction, 'id' | 'amount' | 'date'> = res.data
+  return row
 }
 

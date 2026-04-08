@@ -12,12 +12,20 @@ import { formatMoney } from '@/lib/format-money'
 import { formatGregorianDate } from '@/lib/period'
 import type { Inflow } from '@/types/database'
 import { InflowFormModal } from '@/components/inflow/InflowFormModal'
-import { Pencil, Trash2, Loader2, Plus } from 'lucide-react'
+import {
+  Pencil,
+  Trash2,
+  Loader2,
+  Plus,
+  TrendingUp,
+  List,
+  ChevronUp,
+  ChevronDown,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRolloverBalance } from '@/hooks/useRolloverBalance'
 import { useAvailableCash } from '@/hooks/useAvailableCash'
 import { useAlert } from '@/contexts/AlertContext'
-import { TrendUp, ListDashes, CaretUp, CaretDown } from '@phosphor-icons/react'
 
 const inflowNav = getAppNavItem('/inflow')
 
@@ -172,7 +180,7 @@ export default function InflowPage() {
           <div className="relative flex flex-col items-start">
             <div className="mb-2 flex items-center gap-x-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-100">
-                <TrendUp weight="duotone" className="h-5 w-5 text-emerald-700" aria-hidden />
+                <TrendingUp className="h-5 w-5 text-emerald-700" aria-hidden />
               </div>
               <h2 className="text-sm font-bold text-gray-500">
                 {t('إجمالي الدخل للفترة الحالية', 'Total Income for Current Period')}
@@ -231,15 +239,15 @@ export default function InflowPage() {
             aria-expanded={isSourcesOpen}
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
-              <ListDashes weight="duotone" className="h-6 w-6 text-[#2563EB]" aria-hidden />
+              <List className="h-6 w-6 text-[#2563EB]" aria-hidden />
             </div>
             <h2 className="min-w-0 text-lg font-bold text-[#1F2937]">
               {t('قائمة المصادر', 'Sources List')} ({totals.count})
             </h2>
             {isSourcesOpen ? (
-              <CaretUp weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+              <ChevronUp className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
             ) : (
-              <CaretDown weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+              <ChevronDown className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
             )}
           </button>
           <button

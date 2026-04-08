@@ -6,10 +6,11 @@ import {
   ArrowUpRight,
   Loader2,
   Pencil,
+  Plus,
   Sprout,
   Trash2,
+  Wallet,
 } from 'lucide-react'
-import { Money as MoneyBag, Plus as PhosphorPlus } from '@phosphor-icons/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { usePeriod } from '@/contexts/PeriodContext'
 import { PageHeader } from '@/components/layout/PageHeader'
@@ -289,7 +290,7 @@ export default function GrowthPage() {
               }}
               className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
             >
-              <PhosphorPlus weight="bold" className="h-5 w-5" aria-hidden />
+              <Plus className="h-5 w-5" aria-hidden />
               {t('إيداع', 'Deposit')}
             </button>
           </div>
@@ -319,14 +320,14 @@ export default function GrowthPage() {
               onClick={openNewGoal}
               className="inline-flex w-full shrink-0 items-center justify-center gap-1.5 rounded-full bg-teal-50 px-4 py-2.5 text-sm font-bold text-teal-700 ring-1 ring-teal-200/80 transition-colors hover:bg-teal-100 sm:w-auto"
             >
-              <PhosphorPlus weight="bold" className="h-4 w-4" aria-hidden />
+              <Plus className="h-4 w-4" aria-hidden />
               {t('هدف جديد', 'New Goal')}
             </button>
           </div>
 
           {goals.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl bg-gray-50 px-6 py-16 text-center">
-              <MoneyBag weight="duotone" className="mb-4 h-16 w-16 text-gray-300" aria-hidden />
+              <Wallet className="mb-4 h-16 w-16 text-gray-300" aria-hidden />
               <p className="mb-5 font-medium text-gray-500">
                 {t('لا توجد أهداف ادخارية مسجلة حالياً.', 'No savings goals registered yet.')}
               </p>

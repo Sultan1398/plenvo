@@ -68,7 +68,7 @@ function LoginPageContent() {
       router.refresh()
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      setError(mapAuthError(message))
+      setError(mapAuthError(message, locale))
     } finally {
       setLoading(false)
     }

@@ -31,8 +31,12 @@ import {
   CheckCircle,
   AlertCircle,
   TrendingDown,
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  Receipt,
+  CalendarCheck,
 } from 'lucide-react'
-import { Plus, CaretUp, CaretDown, Receipt, CalendarCheck } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 const outflowNav = getAppNavItem('/outflow')
@@ -279,7 +283,7 @@ export default function OutflowPage() {
               onClick={openAddObligation}
               className="flex items-center justify-center gap-x-2 rounded-xl border border-gray-200 bg-white px-6 py-3.5 text-sm font-bold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
             >
-              <Plus weight="bold" className="h-4 w-4" aria-hidden />
+              <Plus className="h-4 w-4" aria-hidden />
               {t('التزام مالي جديد', 'New Obligation')}
             </button>
             <button
@@ -287,7 +291,7 @@ export default function OutflowPage() {
               onClick={openAddGeneral}
               className="flex items-center justify-center gap-x-2 rounded-xl bg-[#2563EB] px-6 py-3.5 text-sm font-bold text-white shadow-sm transition-colors hover:bg-[#1D4ED8]"
             >
-              <Plus weight="bold" className="h-5 w-5" aria-hidden />
+              <Plus className="h-5 w-5" aria-hidden />
               {t('إضافة مصروف', 'Add Expense')}
             </button>
           </div>
@@ -328,15 +332,15 @@ export default function OutflowPage() {
               aria-expanded={isGeneralExpensesOpen}
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
-                <Receipt weight="duotone" className="h-6 w-6 text-[#2563EB]" aria-hidden />
+                <Receipt className="h-6 w-6 text-[#2563EB]" aria-hidden />
               </div>
               <h2 className="min-w-0 text-lg font-bold text-[#1F2937]">
                 {t('المصروفات العامة', 'General Expenses')}
               </h2>
               {isGeneralExpensesOpen ? (
-                <CaretUp weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+                <ChevronUp className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
               ) : (
-                <CaretDown weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+                <ChevronDown className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
               )}
             </button>
           </div>
@@ -465,15 +469,15 @@ export default function OutflowPage() {
               aria-expanded={isObligationsOpen}
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50">
-                <CalendarCheck weight="duotone" className="h-6 w-6 text-[#2563EB]" aria-hidden />
+                <CalendarCheck className="h-6 w-6 text-[#2563EB]" aria-hidden />
               </div>
               <h2 className="min-w-0 text-lg font-bold text-[#1F2937]">
                 {t('التزامات مالية', 'Financial obligations')}
               </h2>
               {isObligationsOpen ? (
-                <CaretUp weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+                <ChevronUp className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
               ) : (
-                <CaretDown weight="regular" className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
+                <ChevronDown className="ms-auto h-5 w-5 shrink-0 text-gray-400" aria-hidden />
               )}
             </button>
           </div>

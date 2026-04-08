@@ -17,9 +17,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>('ar')
 
   useEffect(() => {
-    const saved =
-      (localStorage.getItem('plenvo-locale') as Locale | null) ??
-      (localStorage.getItem('planora-locale') as Locale | null)
+    // Legacy key `planora-locale` (old project name) was removed; persistence uses `plenvo-locale` only.
+    const saved = localStorage.getItem('plenvo-locale') as Locale | null
     if (saved === 'ar' || saved === 'en') setLocale(saved)
   }, [])
 
