@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { CustomAlert } from '@/components/ui/CustomAlert'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export type AlertOptions = {
   title?: string
@@ -19,6 +20,7 @@ type AlertContextType = {
 const AlertContext = createContext<AlertContextType | undefined>(undefined)
 
 export function AlertProvider({ children }: { children: ReactNode }) {
+  const { t } = useLanguage()
   const [alertConfig, setAlertConfig] = useState<AlertOptions & { isOpen: boolean }>({
     isOpen: false,
     message: '',
@@ -59,6 +61,8 @@ export function AlertProvider({ children }: { children: ReactNode }) {
         type={alertConfig.type ?? 'alert'}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+        confirmLabel={t('تأكيد الحذف', 'Confirm Delete')}
+        okLabel={t('حسناً', 'OK')}
       />
     </AlertContext.Provider>
   )

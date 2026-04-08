@@ -61,9 +61,9 @@ export default function RootLayout({
       <body
         className={`min-h-full flex flex-col bg-background text-foreground ${almarai.className}`}
       >
-        <AlertProvider>
-          <LanguageProvider>{children}</LanguageProvider>
-        </AlertProvider>
+        <LanguageProvider>
+          <AlertProvider>{children}</AlertProvider>
+        </LanguageProvider>
       </body>
     </html>
   )

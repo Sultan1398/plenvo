@@ -1,7 +1,6 @@
 'use client'
 
 import { AlertCircle, X } from 'lucide-react'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 
 type CustomAlertProps = {
@@ -11,6 +10,8 @@ type CustomAlertProps = {
   type?: 'alert' | 'confirm'
   onConfirm: () => void
   onCancel: () => void
+  confirmLabel?: string
+  okLabel?: string
 }
 
 export function CustomAlert({
@@ -20,8 +21,9 @@ export function CustomAlert({
   type = 'alert',
   onConfirm,
   onCancel,
+  confirmLabel,
+  okLabel,
 }: CustomAlertProps) {
-  const { t } = useLanguage()
   if (!isOpen) return null
 
   return (
@@ -82,7 +84,7 @@ export function CustomAlert({
               type === 'confirm' ? 'bg-red-600 hover:bg-red-700' : 'bg-[#2563EB] hover:bg-[#1D4ED8]'
             )}
           >
-            {type === 'confirm' ? t('تأكيد الحذف', 'Confirm Delete') : t('حسناً', 'OK')}
+            {type === 'confirm' ? (confirmLabel ?? 'تأكيد الحذف') : (okLabel ?? 'حسناً')}
           </button>
         </div>
       </div>
